@@ -84,9 +84,10 @@ export function drawPattern(
       } else {
         context.fillStyle = `${color.hex}2e`
         context.fillRect(x, y, cellWidth, cellHeight)
-        if ((options.cellLabels ?? true) && minCell >= 7) {
+        if ((options.cellLabels ?? true) && minCell >= 5) {
+          const labelScale = color.symbol.length >= 3 ? 0.34 : color.symbol.length === 2 ? 0.42 : 0.5
           context.fillStyle = luminance(color.hex) > 0.7 ? '#11110f' : color.hex
-          context.font = `${Math.max(5, minCell * 0.5)}px "Geist", sans-serif`
+          context.font = `600 ${Math.max(3.5, minCell * labelScale)}px "Geist", sans-serif`
           context.textAlign = 'center'
           context.textBaseline = 'middle'
           context.fillText(color.symbol, x + cellWidth / 2, y + cellHeight / 2 + minCell * 0.03)

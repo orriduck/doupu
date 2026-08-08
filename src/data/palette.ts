@@ -32,15 +32,13 @@ const knownNames: Record<string, string> = {
   H7: '黑色',
 }
 
-const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&+?<>/=!*'.split('')
-
-export const STUDIO_PALETTE: BeadColor[] = rawPalette.split(/\s+/).map((entry, index) => {
+export const STUDIO_PALETTE: BeadColor[] = rawPalette.split(/\s+/).map((entry) => {
   const [code, hex] = entry.split(':')
   return {
     brand: 'MARD',
     code,
     name: knownNames[code] ?? `MARD ${code}`,
     hex,
-    symbol: symbols[index] ?? String(index + 1),
+    symbol: code,
   }
 })

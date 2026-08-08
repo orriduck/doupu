@@ -33,12 +33,10 @@ const colors: Array<[string, string, string]> = [
   ['122', '赭黄', '#C49536'],
 ]
 
-const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&+?<>/=!*'.split('')
-
-export const HAMA_MIDI_PALETTE: BeadColor[] = colors.map(([code, name, hex], index) => ({
+export const HAMA_MIDI_PALETTE: BeadColor[] = colors.map(([code, name, hex]) => ({
   brand: 'Hama',
   code,
   name,
   hex,
-  symbol: symbols[index] ?? String(index + 1),
+  symbol: code,
 }))

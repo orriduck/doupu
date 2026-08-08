@@ -10,8 +10,8 @@ import { usePatternProcessor } from './hooks/usePatternProcessor'
 import type { PatternSettings, PatternView } from './types'
 
 const initialSettings: PatternSettings = {
-  columns: 58,
-  rows: 58,
+  columns: 74,
+  rows: 74,
   paletteId: 'mard-221',
   imageFit: 'cover',
   maxColors: 24,
