@@ -7,8 +7,8 @@
   --paper: #fbfbf8;
   --ink: #11110f;
   --muted: #6f6f69;
-  --faint: rgba(17, 17, 15, 0.16);
-  --rule: rgba(17, 17, 15, 0.28);
+  --faint: rgba(17, 17, 15, 0.12);
+  --rule: rgba(17, 17, 15, 0.2);
   --red: #b8352a;
   --page: min(100% - 64px, 1500px);
   --editor-width: 100%;
@@ -269,7 +269,19 @@ input:focus-visible {
 }
 
 .control-section--color {
-  border-top: 0.5px solid var(--rule);
+  margin-top: 7px;
+  padding-top: 11px;
+  position: relative;
+}
+
+.control-section--color::before {
+  width: 30px;
+  height: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+  background: var(--ink);
 }
 
 .control-row {
@@ -277,7 +289,6 @@ input:focus-visible {
   min-height: 32px;
   padding: 0;
   border: 0;
-  border-bottom: 0.5px solid var(--rule);
   background: transparent;
   display: grid;
   grid-template-columns: 88px minmax(72px, 1fr) 104px;
@@ -375,7 +386,7 @@ input:focus-visible {
 }
 
 .editorial-select__menu button + button {
-  border-top: 0.5px solid rgba(17, 17, 15, 0.09);
+  border-top: 0;
 }
 
 .editorial-select__menu button:hover,
@@ -457,8 +468,7 @@ input:focus-visible {
 }
 
 .fit-control {
-  padding: 7px 0 8px;
-  border-bottom: 0.5px solid var(--rule);
+  padding: 8px 0 9px;
 }
 
 .fit-heading {
@@ -484,19 +494,22 @@ input:focus-visible {
 .fit-options button {
   min-height: 32px;
   padding: 0 12px;
-  border: 0.5px solid var(--faint);
-  background: transparent;
+  border: 0;
+  background: rgba(17, 17, 15, 0.028);
   color: #777771;
   cursor: pointer;
   font-size: 12px;
-  transition: border-color 300ms var(--ease-heavy), color 300ms var(--ease-heavy), background-color 300ms var(--ease-heavy);
+  transition: color 300ms var(--ease-heavy), background-color 300ms var(--ease-heavy), box-shadow 300ms var(--ease-heavy);
 }
 
 .fit-options button:hover,
 .fit-options button.is-active {
-  border-color: var(--ink);
-  background: rgba(17, 17, 15, 0.025);
+  background: rgba(17, 17, 15, 0.055);
   color: var(--ink);
+}
+
+.fit-options button.is-active {
+  box-shadow: inset 0 -2px 0 var(--ink);
 }
 
 .fit-options button:active {
@@ -511,8 +524,7 @@ input:focus-visible {
 }
 
 .background-control {
-  padding: 7px 0 8px;
-  border-bottom: 0.5px solid var(--rule);
+  padding: 10px 0 9px;
 }
 
 .background-heading {
@@ -537,20 +549,23 @@ input:focus-visible {
 .background-options button {
   min-height: 32px;
   padding: 0 12px;
-  border: 0.5px solid var(--faint);
-  background: transparent;
+  border: 0;
+  background: rgba(17, 17, 15, 0.028);
   color: #777771;
   cursor: pointer;
   font-size: 12px;
-  transition: border-color 300ms var(--ease-heavy), color 300ms var(--ease-heavy), background-color 300ms var(--ease-heavy);
+  transition: color 300ms var(--ease-heavy), background-color 300ms var(--ease-heavy), box-shadow 300ms var(--ease-heavy);
 }
 
 .background-options button:hover,
 .background-options button:focus-visible,
 .background-options button.is-active {
-  border-color: var(--ink);
-  background: rgba(17, 17, 15, 0.025);
+  background: rgba(17, 17, 15, 0.055);
   color: var(--ink);
+}
+
+.background-options button.is-active {
+  box-shadow: inset 0 -2px 0 var(--ink);
 }
 
 .background-options button:active {
@@ -1671,7 +1686,6 @@ input:focus-visible {
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-top: 1px solid var(--ink);
-  border-bottom: 0.5px solid var(--rule);
 }
 
 .workflow-switch button {
@@ -1690,7 +1704,6 @@ input:focus-visible {
 
 .workflow-switch button + button {
   padding-left: 16px;
-  border-left: 0.5px solid var(--rule);
 }
 
 .workflow-switch button::after {
@@ -1712,6 +1725,15 @@ input:focus-visible {
 
 .workflow-switch button.is-active {
   color: var(--ink);
+}
+
+.workflow-switch button:focus-visible {
+  outline: 0;
+  color: var(--red);
+}
+
+.workflow-switch button:focus-visible::after {
+  transform: scaleX(1);
 }
 
 .workflow-switch button.is-active::after {
@@ -1808,7 +1830,6 @@ input:focus-visible {
   align-items: center;
   justify-content: center;
   background: rgba(17, 17, 15, 0.018);
-  border-bottom: 0.5px solid var(--rule);
   animation: enter-art 900ms 120ms var(--ease-heavy) both;
 }
 
@@ -1857,7 +1878,6 @@ input:focus-visible {
   margin: 0 0 8px;
   padding: 8px 0;
   border: 0;
-  border-bottom: 0.5px solid var(--rule);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
@@ -1881,13 +1901,39 @@ input:focus-visible {
 }
 
 .manual-setup {
-  border-top: 0.5px solid var(--rule);
+  padding-top: 8px;
+  position: relative;
+}
+
+.manual-setup::before {
+  width: 30px;
+  height: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+  background: var(--ink);
 }
 
 .tool-section,
 .color-section {
-  padding: 10px 0 11px;
-  border-bottom: 0.5px solid var(--rule);
+  padding: 12px 0 10px;
+}
+
+.color-section {
+  margin-top: 4px;
+  padding-top: 13px;
+  position: relative;
+}
+
+.color-section::before {
+  width: 30px;
+  height: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+  background: var(--ink);
 }
 
 .manual-section-heading {
@@ -1918,22 +1964,26 @@ input:focus-visible {
 .tool-grid button {
   min-height: 42px;
   padding: 5px 3px;
-  border: 0.5px solid var(--faint);
-  background: transparent;
+  border: 0;
+  background: rgba(17, 17, 15, 0.028);
   color: #777771;
   cursor: pointer;
   display: grid;
   place-items: center;
   gap: 3px;
   font-size: 10px;
-  transition: border-color 220ms ease, color 220ms ease, background-color 220ms ease;
+  transition: color 220ms ease, background-color 220ms ease;
 }
 
 .tool-grid button:hover,
 .tool-grid button.is-active {
-  border-color: var(--ink);
-  background: rgba(17, 17, 15, 0.035);
+  background: rgba(17, 17, 15, 0.065);
   color: var(--ink);
+}
+
+.tool-grid button.is-active {
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .selected-color {
@@ -1959,8 +2009,9 @@ input:focus-visible {
 .color-search input {
   width: 100%;
   height: 32px;
-  padding: 0 9px;
-  border: 0.5px solid var(--faint);
+  padding: 0;
+  border: 0;
+  border-bottom: 0.5px solid var(--rule);
   border-radius: 0;
   background: transparent;
   color: var(--ink);
@@ -1999,8 +2050,12 @@ input:focus-visible {
 
 .color-grid button:hover,
 .color-grid button.is-active {
-  border-color: var(--ink);
+  background: rgba(17, 17, 15, 0.045);
   color: var(--ink);
+}
+
+.color-grid button.is-active {
+  box-shadow: inset 0 -2px 0 var(--ink);
 }
 
 .color-grid button i {
@@ -2082,6 +2137,7 @@ input:focus-visible {
 
 .export-dock {
   min-height: 92px;
+  border-top: 0.5px solid var(--rule);
   display: grid;
   grid-template-columns: minmax(150px, 1.2fr) repeat(3, minmax(150px, 1fr));
   align-items: stretch;
@@ -2109,7 +2165,6 @@ input:focus-visible {
   min-width: 0;
   padding: 10px 12px;
   border: 0;
-  border-left: 0.5px solid var(--rule);
   background: transparent;
   cursor: pointer;
   display: flex;
@@ -2336,7 +2391,6 @@ input:focus-visible {
     min-height: 70px;
     padding: 10px 0;
     border-left: 0;
-    border-top: 0.5px solid var(--rule);
   }
 
   .export-dock > button strong {
