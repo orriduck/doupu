@@ -153,14 +153,14 @@ export default function App() {
               <button type="button" onClick={() => void runExport('pdf')} disabled={!result || exportStatus !== 'idle'}>
                 <span className="export-copy">
                   <strong>{exportStatus === 'pdf' ? '正在排版…' : exportStatus === 'pdf-done' ? '制作图纸已下载' : '打印制作图纸'}</strong>
-                  <small>PDF · 含效果图、分页图纸和豆子清单</small>
+                  <small>PDF · 横向分页，每片重叠 2 行与 2 列</small>
                 </span>
                 <DownloadSimple size={23} weight="light" aria-hidden="true" />
               </button>
               <button type="button" onClick={() => void runExport('png')} disabled={!result || exportStatus !== 'idle'}>
                 <span className="export-copy">
                   <strong>{exportStatus === 'png' ? '正在生成…' : exportStatus === 'png-done' ? '图纸图片已下载' : '保存图纸图片'}</strong>
-                  <small>PNG · 单张带网格和格内符号的图纸</small>
+                  <small>PNG · 单张带行列号、网格和格内符号</small>
                 </span>
                 <DownloadSimple size={23} weight="light" aria-hidden="true" />
               </button>

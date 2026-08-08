@@ -1,6 +1,7 @@
 import { jsPDF } from 'jspdf'
 import { drawPattern } from './drawPattern'
 import { getOccupiedBounds } from './patternBounds'
+import { createOverlappingSlices, type OverlappingSlice } from './pagination'
 import type { PatternResult } from '../types'
 
 // A4 landscape proportions at roughly 150 dpi. Keeping the raster canvas and
@@ -10,6 +11,7 @@ const PAGE_HEIGHT = 1240
 const INK = '#11110f'
 const PAPER = '#fbfbf8'
 const RED = '#b8352a'
+const PAGE_OVERLAP = 2
 
 function fitCanvasText(
   context: CanvasRenderingContext2D,
@@ -137,7 +139,7 @@ function drawCover(result: PatternResult, name: string) {
   })
   context.fillStyle = '#71716c'
   context.font = '13px "Geist", sans-serif'
-  context.fillText('PRINT LANDSCAPE  /  CHART PAGES FOLLOW', listX, PAGE_HEIGHT - 64)
+  context.fillText('PRINT LANDSCAPE  /  2-CELL OVERLAP  /  CHART PAGES FOLLOW', listX, PAGE_HEIGHT - 64)
   context.fillStyle = RED
   context.fillRect(PAGE_WIDTH - 95, 78, 17, 17)
   return canvas
@@ -152,12 +154,14 @@ function drawChartPage(
   endRow: number,
   pageNumber: number,
   pageCount: number,
+  columnSlice: OverlappingSlice,
+  rowSlice: OverlappingSlice,
 ) {
   const { canvas, context } = setupPage()
   const marginX = 84
   const chartTop = 175
   const chartBottom = 100
-  const labelSpace = 42
+  const labelSpace = 62
   const visibleColumns = endColumn - startColumn
   const visibleRows = endRow - startRow
   const cellSize = Math.min(
@@ -174,7 +178,7 @@ function drawChartPage(
   context.fillText(pageTitle, marginX, 80)
   context.font = '16px "Geist", sans-serif'
   context.fillStyle = '#686862'
-  context.fillText(`ROWS ${startRow + 1}–${endRow}  /  COLUMNS ${startColumn + 1}–${endColumn}`, marginX, 116)
+  context.fillText(`ROWS ${startRow + 1}-${endRow}  /  COLUMNS ${startColumn + 1}-${endColumn}`, marginX, 116)
   context.textAlign = 'right'
   context.fillText(`${String(pageNumber).padStart(2, '0')} / ${String(pageCount).padStart(2, '0')}`, PAGE_WIDTH - marginX, 116)
   context.textAlign = 'left'
@@ -200,20 +204,60 @@ function drawChartPage(
   context.textAlign = 'center'
   context.textBaseline = 'middle'
   for (let column = 0; column < visibleColumns; column += 1) {
-    if ((column + startColumn) % 5 !== 0 && visibleColumns > 22) continue
-    context.fillText(String(column + startColumn + 1), chartX + (column + 0.5) * cellSize, chartTop + labelSpace / 2)
+    context.fillText(String(column + startColumn + 1), chartX + (column + 0.5) * cellSize, chartTop + 18)
   }
   context.textAlign = 'right'
   for (let row = 0; row < visibleRows; row += 1) {
-    if ((row + startRow) % 5 !== 0 && visibleRows > 30) continue
     context.fillText(String(row + startRow + 1), chartX - 12, chartY + (row + 0.5) * cellSize)
   }
   context.textAlign = 'left'
+  context.strokeStyle = RED
+  context.fillStyle = RED
+  context.lineWidth = 2
+  context.font = '12px "Geist", sans-serif'
+  const bracketInset = 8
+  const columnBracketY = chartY - 9
+  const columnLabelY = chartY - 23
+  const rowBracketX = chartX - 38
+  if (columnSlice.overlapBefore > 0) {
+    const span = columnSlice.overlapBefore * cellSize
+    context.beginPath()
+    context.moveTo(chartX + bracketInset, columnBracketY)
+    context.lineTo(chartX + span - bracketInset, columnBracketY)
+    context.stroke()
+    context.textAlign = 'left'
+    context.fillText(`${columnSlice.overlapBefore} COL OVERLAP`, chartX, columnLabelY)
+  }
+  if (columnSlice.overlapAfter > 0) {
+    const start = chartX + chartWidth - columnSlice.overlapAfter * cellSize
+    context.beginPath()
+    context.moveTo(start + bracketInset, columnBracketY)
+    context.lineTo(chartX + chartWidth - bracketInset, columnBracketY)
+    context.stroke()
+    context.textAlign = 'right'
+    context.fillText(`${columnSlice.overlapAfter} COL OVERLAP`, chartX + chartWidth, columnLabelY)
+  }
+  if (rowSlice.overlapBefore > 0) {
+    const span = rowSlice.overlapBefore * cellSize
+    context.beginPath()
+    context.moveTo(rowBracketX, chartY + bracketInset)
+    context.lineTo(rowBracketX, chartY + span - bracketInset)
+    context.stroke()
+  }
+  if (rowSlice.overlapAfter > 0) {
+    const start = chartY + chartHeight - rowSlice.overlapAfter * cellSize
+    context.beginPath()
+    context.moveTo(rowBracketX, start + bracketInset)
+    context.lineTo(rowBracketX, chartY + chartHeight - bracketInset)
+    context.stroke()
+  }
+
   context.fillStyle = RED
   context.fillRect(marginX, PAGE_HEIGHT - 72, 80, 2)
   context.fillStyle = '#686862'
   context.font = '13px "Geist", sans-serif'
-  context.fillText('MATERIAL CODE IN EVERY CELL  /  HEAVY GUIDE EVERY 5 CELLS  /  PRINT AT 100%', marginX + 100, PAGE_HEIGHT - 65)
+  context.textAlign = 'left'
+  context.fillText('MATERIAL CODE IN EVERY CELL  /  2-ROW / 2-COLUMN OVERLAP  /  HEAVY GUIDE EVERY 5 CELLS  /  PRINT AT 100%', marginX + 100, PAGE_HEIGHT - 65)
   return canvas
 }
 
@@ -221,9 +265,9 @@ export async function exportPatternPdf(result: PatternResult, name: string) {
   const tileColumns = 42
   const tileRows = 29
   const occupied = getOccupiedBounds(result)
-  const horizontalPages = Math.ceil(occupied.columns / tileColumns)
-  const verticalPages = Math.ceil(occupied.rows / tileRows)
-  const chartPageCount = horizontalPages * verticalPages
+  const columnSlices = createOverlappingSlices(occupied.startColumn, occupied.endColumn, tileColumns, PAGE_OVERLAP)
+  const rowSlices = createOverlappingSlices(occupied.startRow, occupied.endRow, tileRows, PAGE_OVERLAP)
+  const chartPageCount = columnSlices.length * rowSlices.length
   const pdf = new jsPDF({
     orientation: 'landscape',
     unit: 'px',
@@ -233,21 +277,19 @@ export async function exportPatternPdf(result: PatternResult, name: string) {
   })
   addCanvas(pdf, drawCover(result, name), true)
   let pageNumber = 1
-  for (let pageRow = 0; pageRow < verticalPages; pageRow += 1) {
-    for (let pageColumn = 0; pageColumn < horizontalPages; pageColumn += 1) {
-      const startColumn = occupied.startColumn + pageColumn * tileColumns
-      const startRow = occupied.startRow + pageRow * tileRows
-      const endColumn = Math.min(occupied.endColumn, startColumn + tileColumns)
-      const endRow = Math.min(occupied.endRow, startRow + tileRows)
+  for (const rowSlice of rowSlices) {
+    for (const columnSlice of columnSlices) {
       addCanvas(pdf, drawChartPage(
         result,
         name,
-        startColumn,
-        startRow,
-        endColumn,
-        endRow,
+        columnSlice.start,
+        rowSlice.start,
+        columnSlice.end,
+        rowSlice.end,
         pageNumber,
         chartPageCount,
+        columnSlice,
+        rowSlice,
       ), false)
       pageNumber += 1
     }

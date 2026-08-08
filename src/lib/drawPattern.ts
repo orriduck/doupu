@@ -147,9 +147,64 @@ export function createPatternCanvas(result: PatternResult, view: PatternView, ta
   return canvas
 }
 
-export async function downloadPatternPng(result: PatternResult, name: string) {
+export function createNumberedChartCanvas(result: PatternResult, targetWidth = 4096) {
   const bounds = getOccupiedBounds(result)
-  const canvas = createPatternCanvas(result, 'chart', Math.min(4096, Math.max(1800, bounds.columns * 40)))
+  const horizontalPadding = Math.max(18, Math.round(targetWidth * 0.006))
+  const desiredCellSize = Math.min(40, (targetWidth - horizontalPadding * 2) / (bounds.columns + 1.65))
+  const requestedCellSize = Math.max(14, desiredCellSize)
+  const gridWidth = Math.round(requestedCellSize * bounds.columns)
+  const cellSize = gridWidth / bounds.columns
+  const labelSpace = Math.max(46, Math.round(cellSize * 1.55))
+  const gridHeight = Math.round(cellSize * bounds.rows)
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(labelSpace + gridWidth + horizontalPadding)
+  canvas.height = Math.round(labelSpace + gridHeight + horizontalPadding)
+  const context = canvas.getContext('2d')
+  if (!context) throw new Error('无法创建带编号的导出画布。')
+
+  context.fillStyle = '#fbfbf8'
+  context.fillRect(0, 0, canvas.width, canvas.height)
+  context.save()
+  context.translate(labelSpace, labelSpace)
+  drawPattern(context, result, 'chart', gridWidth, gridHeight, {
+    startColumn: bounds.startColumn,
+    startRow: bounds.startRow,
+    endColumn: bounds.endColumn,
+    endRow: bounds.endRow,
+    cellLabels: true,
+  })
+  context.restore()
+
+  const labelSize = Math.max(10, Math.min(17, cellSize * 0.38))
+  context.fillStyle = '#4c4c48'
+  context.font = `500 ${labelSize}px "Geist", sans-serif`
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  for (let column = 0; column < bounds.columns; column += 1) {
+    context.fillText(
+      String(bounds.startColumn + column + 1),
+      labelSpace + (column + 0.5) * cellSize,
+      labelSpace / 2,
+    )
+  }
+  context.textAlign = 'right'
+  for (let row = 0; row < bounds.rows; row += 1) {
+    context.fillText(
+      String(bounds.startRow + row + 1),
+      labelSpace - Math.max(8, cellSize * 0.28),
+      labelSpace + (row + 0.5) * cellSize,
+    )
+  }
+  context.textAlign = 'center'
+  context.fillStyle = '#b8352a'
+  context.font = `600 ${Math.max(9, labelSize * 0.82)}px "Geist", sans-serif`
+  context.fillText('C', labelSpace / 2, labelSpace * 0.34)
+  context.fillText('R', labelSpace * 0.42, labelSpace * 0.72)
+  return canvas
+}
+
+export async function downloadPatternPng(result: PatternResult, name: string) {
+  const canvas = createNumberedChartCanvas(result)
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((value) => value ? resolve(value) : reject(new Error('PNG 生成失败')), 'image/png')
   })
