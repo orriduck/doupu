@@ -70,6 +70,38 @@ export function setArtworkCell(cells: Uint16Array, columns: number, rows: number
   return next
 }
 
+function stampBrush(cells: Uint16Array, columns: number, rows: number, column: number, row: number, size: number, value: number) {
+  const radius = Math.floor(Math.max(1, size) / 2)
+  for (let offsetY = -radius; offsetY <= radius; offsetY += 1) {
+    const targetRow = row + offsetY
+    if (targetRow < 0 || targetRow >= rows) continue
+    for (let offsetX = -radius; offsetX <= radius; offsetX += 1) {
+      const targetColumn = column + offsetX
+      if (targetColumn < 0 || targetColumn >= columns) continue
+      cells[targetRow * columns + targetColumn] = value
+    }
+  }
+}
+
+export function drawBrushStrokeCells(cells: Uint16Array, columns: number, rows: number, startColumn: number, startRow: number, endColumn: number, endRow: number, size: number, value: number) {
+  const next = cells.slice()
+  let x = startColumn
+  let y = startRow
+  const dx = Math.abs(endColumn - startColumn)
+  const sx = startColumn < endColumn ? 1 : -1
+  const dy = -Math.abs(endRow - startRow)
+  const sy = startRow < endRow ? 1 : -1
+  let error = dx + dy
+  while (true) {
+    stampBrush(next, columns, rows, x, y, size, value)
+    if (x === endColumn && y === endRow) break
+    const doubleError = error * 2
+    if (doubleError >= dy) { error += dy; x += sx }
+    if (doubleError <= dx) { error += dx; y += sy }
+  }
+  return next
+}
+
 export function drawLineCells(cells: Uint16Array, columns: number, rows: number, startColumn: number, startRow: number, endColumn: number, endRow: number, value: number) {
   const next = cells.slice()
   let x = startColumn

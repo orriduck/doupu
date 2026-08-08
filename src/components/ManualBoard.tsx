@@ -2,7 +2,7 @@ import { ArrowUUpLeft, ArrowUUpRight, Trash } from '@phosphor-icons/react'
 import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { getPalette } from '../data/palettes'
-import { drawLineCells, drawRectangleCells, EMPTY_CELL, floodFillCells, setArtworkCell, updateArtworkCells } from '../lib/manualPattern'
+import { drawBrushStrokeCells, drawLineCells, drawRectangleCells, EMPTY_CELL, floodFillCells, updateArtworkCells } from '../lib/manualPattern'
 import type { BoardTool, ManualArtwork } from '../types'
 
 interface CellPosition { column: number; row: number }
@@ -10,13 +10,14 @@ interface CellPosition { column: number; row: number }
 interface ManualBoardProps {
   artwork: ManualArtwork
   historyKey: number
+  brushSize: number
   selectedColor: number
   tool: BoardTool
   onChange: (artwork: ManualArtwork) => void
   onPickColor: (index: number) => void
 }
 
-export function ManualBoard({ artwork, historyKey, selectedColor, tool, onChange, onPickColor }: ManualBoardProps) {
+export function ManualBoard({ artwork, historyKey, brushSize, selectedColor, tool, onChange, onPickColor }: ManualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const dragStart = useRef<CellPosition | null>(null)
   const dragSnapshot = useRef<Uint16Array | null>(null)
@@ -102,9 +103,12 @@ export function ManualBoard({ artwork, historyKey, selectedColor, tool, onChange
   const applyContinuous = (position: CellPosition) => {
     const cellIndex = position.row * artwork.columns + position.column
     if (lastCell.current === cellIndex) return
-    lastCell.current = cellIndex
     const value = tool === 'eraser' ? EMPTY_CELL : selectedColor
-    const cells = setArtworkCell(workingCells.current, artwork.columns, artwork.rows, position.column, position.row, value)
+    const previousIndex = lastCell.current
+    const startColumn = previousIndex == null ? position.column : previousIndex % artwork.columns
+    const startRow = previousIndex == null ? position.row : Math.floor(previousIndex / artwork.columns)
+    lastCell.current = cellIndex
+    const cells = drawBrushStrokeCells(workingCells.current, artwork.columns, artwork.rows, startColumn, startRow, position.column, position.row, brushSize, value)
     workingCells.current = cells
     onChange(updateArtworkCells(artwork, cells))
   }

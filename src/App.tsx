@@ -39,6 +39,7 @@ export default function App() {
   const [boardInitialized, setBoardInitialized] = useState(false)
   const [selectedColor, setSelectedColor] = useState(0)
   const [tool, setTool] = useState<BoardTool>('pencil')
+  const [brushSize, setBrushSize] = useState(1)
   const [isDragging, setIsDragging] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [exportStatus, setExportStatus] = useState<ExportStatus>('idle')
@@ -201,10 +202,12 @@ export default function App() {
                 artwork={artwork}
                 selectedColor={selectedColor}
                 tool={tool}
+                brushSize={brushSize}
                 onBoardChange={(columns, rows) => { setArtwork((current) => resizeArtwork(current, columns, rows)); setBoardInitialized(true); setBoardRevision((value) => value + 1) }}
                 onPaletteChange={(paletteId) => { setArtwork((current) => remapArtworkPalette(current, paletteId)); setSelectedColor(0); setBoardInitialized(true); setBoardRevision((value) => value + 1) }}
                 onColorChange={setSelectedColor}
                 onToolChange={setTool}
+                onBrushSizeChange={setBrushSize}
               />
             </>
           )}
@@ -248,7 +251,7 @@ export default function App() {
             }}
           >
             {workflow === 'board' && workspaceView === 'board' ? (
-              <ManualBoard artwork={artwork} historyKey={boardRevision} selectedColor={selectedColor} tool={tool} onChange={(next) => { setArtwork(next); setBoardInitialized(true) }} onPickColor={(index) => { setSelectedColor(index); setTool('pencil') }} />
+              <ManualBoard artwork={artwork} historyKey={boardRevision} brushSize={brushSize} selectedColor={selectedColor} tool={tool} onChange={(next) => { setArtwork(next); setBoardInitialized(true) }} onPickColor={(index) => { setSelectedColor(index); setTool('pencil') }} />
             ) : (
               <div className="pattern-sheet pattern-sheet--single">
                 <PatternCanvas

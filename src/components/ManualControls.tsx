@@ -9,10 +9,12 @@ interface ManualControlsProps {
   artwork: ManualArtwork
   selectedColor: number
   tool: BoardTool
+  brushSize: number
   onBoardChange: (columns: number, rows: number) => void
   onPaletteChange: (paletteId: PatternSettings['paletteId']) => void
   onColorChange: (index: number) => void
   onToolChange: (tool: BoardTool) => void
+  onBrushSizeChange: (size: number) => void
 }
 
 const tools: Array<{ value: BoardTool; label: string; icon: typeof PencilSimple }> = [
@@ -71,11 +73,27 @@ export function ManualControls(props: ManualControlsProps) {
             const Icon = item.icon
             return (
               <button key={item.value} type="button" className={props.tool === item.value ? 'is-active' : ''} aria-pressed={props.tool === item.value} onClick={() => props.onToolChange(item.value)}>
-                <Icon size={18} weight="light" aria-hidden="true" /><span>{item.label}</span>
+                <Icon size={20} weight="light" aria-hidden="true" /><span>{item.label}</span>
               </button>
             )
           })}
         </div>
+        {(props.tool === 'pencil' || props.tool === 'eraser') && (
+          <label className="brush-size-control">
+            <span>{props.tool === 'pencil' ? '画笔大小' : '橡皮大小'}</span>
+            <input
+              type="range"
+              min="1"
+              max="7"
+              step="2"
+              value={props.brushSize}
+              aria-label={props.tool === 'pencil' ? '画笔大小' : '橡皮大小'}
+              aria-valuetext={`${props.brushSize} 格`}
+              onInput={(event) => props.onBrushSizeChange(Number(event.currentTarget.value))}
+            />
+            <output>{props.brushSize} 格</output>
+          </label>
+        )}
       </section>
 
       <section className="color-section" aria-labelledby="color-title">
