@@ -10,6 +10,27 @@ const INK = '#11110f'
 const PAPER = '#fbfbf8'
 const RED = '#b8352a'
 
+function fitCanvasText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  maximumSize: number,
+  minimumSize: number,
+  family: string,
+) {
+  let size = maximumSize
+  while (size > minimumSize) {
+    context.font = `${size}px ${family}`
+    if (context.measureText(text).width <= maxWidth) return text
+    size -= 2
+  }
+  context.font = `${minimumSize}px ${family}`
+  if (context.measureText(text).width <= maxWidth) return text
+  let fitted = text
+  while (fitted.length > 1 && context.measureText(`${fitted}…`).width > maxWidth) fitted = fitted.slice(0, -1)
+  return `${fitted}…`
+}
+
 function setupPage() {
   const canvas = document.createElement('canvas')
   canvas.width = PAGE_WIDTH
@@ -42,8 +63,8 @@ function drawCover(result: PatternResult, name: string) {
   context.lineTo(PAGE_WIDTH - 78, 174)
   context.stroke()
 
-  context.font = '74px "Songti SC", "Noto Serif SC", serif'
-  context.fillText(name || '我的拼豆图案', 78, 280)
+  const title = fitCanvasText(context, name || '我的拼豆图案', PAGE_WIDTH - 156, 74, 38, '"Songti SC", "Noto Serif SC", serif')
+  context.fillText(title, 78, 280)
   context.font = '24px "Geist", sans-serif'
   context.fillStyle = '#5f5f59'
   context.fillText(`${result.columns} × ${result.rows}  /  ${result.totalBeads.toLocaleString()} BEADS  /  ${result.palette.length} COLORS`, 82, 330)
@@ -144,8 +165,8 @@ function drawChartPage(
   const chartY = chartTop + labelSpace
 
   context.fillStyle = INK
-  context.font = '31px "Songti SC", "Noto Serif SC", serif'
-  context.fillText(name || '拼豆图纸', marginX, 80)
+  const pageTitle = fitCanvasText(context, name || '拼豆图纸', PAGE_WIDTH - marginX * 2 - 180, 31, 21, '"Songti SC", "Noto Serif SC", serif')
+  context.fillText(pageTitle, marginX, 80)
   context.font = '16px "Geist", sans-serif'
   context.fillStyle = '#686862'
   context.fillText(`ROWS ${startRow + 1}–${endRow}  /  COLUMNS ${startColumn + 1}–${endColumn}`, marginX, 116)
