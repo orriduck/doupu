@@ -104,10 +104,6 @@ export default function App() {
 
         <div className="editor-column">
           <EditorControls source={source} settings={settings} onChange={setSettings} />
-          <div className="stats" aria-live="polite">
-            <div><strong>{totalLabel}</strong><span>颗</span></div>
-            <div><strong>{colorLabel}</strong><span>色</span></div>
-          </div>
         </div>
 
         <div
@@ -143,6 +139,10 @@ export default function App() {
         </div>
 
         <div className="maker-ledger">
+          <div className="stats" aria-live="polite">
+            <div><strong>{totalLabel}</strong><span>颗</span></div>
+            <div><strong>{colorLabel}</strong><span>色</span></div>
+          </div>
           <MaterialsLedger result={result} highlightIndex={highlightIndex} onHighlight={setHighlightIndex} />
           <section className="export-panel" aria-labelledby="export-title">
             <div className="export-heading">

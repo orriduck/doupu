@@ -10,8 +10,8 @@
   --faint: rgba(17, 17, 15, 0.16);
   --rule: rgba(17, 17, 15, 0.28);
   --red: #b8352a;
-  --page: min(100% - 80px, 1480px);
-  --editor-width: min(100%, 456px);
+  --page: min(100% - 64px, 1500px);
+  --editor-width: 100%;
   --ease-heavy: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -87,7 +87,7 @@ input:focus-visible {
 
 .site-header {
   width: var(--page);
-  min-height: 92px;
+  min-height: 76px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -158,38 +158,43 @@ input:focus-visible {
 
 .maker {
   width: var(--page);
-  min-height: 1010px;
+  min-height: calc(100svh - 76px);
   margin: 0 auto;
-  padding: 48px 0 128px;
+  padding: 10px 0 0;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto 1fr;
   column-gap: 24px;
   align-items: start;
 }
 
-.editor-column,
-.maker-ledger {
+.editor-column {
   width: var(--editor-width);
   max-width: 100%;
   grid-column: 1 / span 4;
 }
 
+.maker-ledger {
+  width: 100%;
+  max-width: 100%;
+  grid-column: 10 / span 3;
+}
+
 .maker-intro {
   width: 100%;
-  max-width: 590px;
-  grid-column: 1 / span 5;
+  max-width: none;
+  grid-column: 1 / span 4;
   grid-row: 1;
   animation: enter-page 1100ms 90ms var(--ease-heavy) both;
 }
 
 .maker-intro h1 {
-  max-width: 760px;
+  max-width: 100%;
   margin: 0;
   font-family: 'Noto Serif SC Variable', 'Songti SC', serif;
-  font-size: clamp(52px, 5vw, 72px);
+  font-size: clamp(36px, 3vw, 44px);
   font-weight: 390;
-  line-height: 1.23;
+  line-height: 1.15;
   letter-spacing: -0.055em;
 }
 
@@ -198,28 +203,28 @@ input:focus-visible {
 }
 
 .maker-intro > p {
-  max-width: 440px;
-  margin: 28px 0 0;
+  max-width: 410px;
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 14px;
-  line-height: 1.8;
+  line-height: 1.55;
   letter-spacing: 0.01em;
 }
 
 .upload-action {
-  margin-top: 42px;
+  margin-top: 10px;
 }
 
 .upload-link {
-  min-height: 48px;
+  min-height: 34px;
   padding: 0;
   border: 0;
   background: none;
   display: inline-flex;
   align-items: center;
-  gap: 38px;
+  gap: 26px;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 470;
 }
 
@@ -236,7 +241,7 @@ input:focus-visible {
 }
 
 .privacy-note {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -246,7 +251,7 @@ input:focus-visible {
 
 .editor-column {
   grid-row: 2;
-  margin-top: 28px;
+  margin-top: 14px;
   animation: enter-page 1100ms 160ms var(--ease-heavy) both;
 }
 
@@ -256,7 +261,7 @@ input:focus-visible {
 
 .control-row {
   width: 100%;
-  min-height: 42px;
+  min-height: 32px;
   padding: 0;
   border: 0;
   border-bottom: 0.5px solid var(--rule);
@@ -265,7 +270,7 @@ input:focus-visible {
   grid-template-columns: 88px minmax(72px, 1fr) 104px;
   align-items: center;
   column-gap: 12px;
-  font-size: 14px;
+  font-size: 13px;
   text-align: left;
 }
 
@@ -290,7 +295,7 @@ input:focus-visible {
 
 .editorial-select__trigger {
   width: 100%;
-  min-height: 41px;
+  min-height: 31px;
   padding: 0 24px 0 0;
   border: 0;
   background: transparent;
@@ -439,12 +444,12 @@ input:focus-visible {
 }
 
 .fit-control {
-  padding: 14px 0 16px;
+  padding: 7px 0 8px;
   border-bottom: 0.5px solid var(--rule);
 }
 
 .fit-heading {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -464,7 +469,7 @@ input:focus-visible {
 }
 
 .fit-options button {
-  min-height: 38px;
+  min-height: 32px;
   padding: 0 12px;
   border: 0.5px solid var(--faint);
   background: transparent;
@@ -486,19 +491,19 @@ input:focus-visible {
 }
 
 .fit-control p {
-  margin: 10px 0 0;
+  margin: 6px 0 0;
   color: #81817b;
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.5;
 }
 
 .background-control {
-  padding: 14px 0 16px;
+  padding: 7px 0 8px;
   border-bottom: 0.5px solid var(--rule);
 }
 
 .background-heading {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -517,7 +522,7 @@ input:focus-visible {
 }
 
 .background-options button {
-  min-height: 38px;
+  min-height: 32px;
   padding: 0 12px;
   border: 0.5px solid var(--faint);
   background: transparent;
@@ -569,19 +574,20 @@ input:focus-visible {
 }
 
 .background-control p {
-  margin: 10px 0 0;
+  margin: 6px 0 0;
   color: #81817b;
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.5;
 }
 
 .crop-control {
-  margin-top: 20px;
-  padding-bottom: 18px;
+  --crop-size: clamp(180px, 14vw, 210px);
+  margin-top: 11px;
+  padding-bottom: 8px;
 }
 
 .crop-heading {
-  min-height: 42px;
+  min-height: 32px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -590,7 +596,7 @@ input:focus-visible {
 
 .crop-heading > div {
   display: grid;
-  gap: 5px;
+  gap: 2px;
 }
 
 .crop-heading strong {
@@ -622,8 +628,8 @@ input:focus-visible {
 }
 
 .crop-viewport {
-  width: 100%;
-  max-height: 456px;
+  width: min(100%, var(--crop-size));
+  max-height: var(--crop-size);
   position: relative;
   overflow: hidden;
   background: #e9e6dd;
@@ -675,7 +681,8 @@ input:focus-visible {
 }
 
 .crop-zoom {
-  min-height: 42px;
+  width: min(100%, var(--crop-size));
+  min-height: 34px;
   display: grid;
   grid-template-columns: 44px 28px minmax(72px, 1fr) 28px 50px;
   align-items: center;
@@ -725,8 +732,8 @@ input:focus-visible {
 .preview-header {
   position: relative;
   z-index: 4;
-  width: 76%;
-  min-height: 40px;
+  width: 88%;
+  min-height: 34px;
   flex: 0 0 auto;
   display: flex;
   align-items: flex-end;
@@ -734,22 +741,22 @@ input:focus-visible {
 }
 
 .preview-header > span {
-  padding-bottom: 11px;
+  padding-bottom: 8px;
   color: #85857f;
   font-size: 11px;
 }
 
 .view-tabs {
   width: auto;
-  height: 40px;
+  height: 34px;
   display: flex;
   align-items: end;
   gap: 32px;
 }
 
 .view-tabs button {
-  height: 40px;
-  padding: 0 0 11px;
+  height: 34px;
+  padding: 0 0 8px;
   border: 0;
   background: none;
   color: #898983;
@@ -781,22 +788,22 @@ input:focus-visible {
 
 .stats {
   width: 100%;
-  min-height: 98px;
-  margin-top: 18px;
+  min-height: 66px;
+  margin: 0 0 12px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 24px;
+  column-gap: 12px;
 }
 
 .stats > div {
-  padding: 0 0 10px;
+  padding: 0 0 6px;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
   align-items: baseline;
   align-content: end;
   justify-content: start;
-  gap: 9px;
+  gap: 6px;
 }
 
 .stats > div + div {
@@ -805,29 +812,29 @@ input:focus-visible {
 
 .stats strong {
   font-family: 'Noto Serif SC Variable', 'Songti SC', serif;
-  font-size: clamp(38px, 3.5vw, 51px);
+  font-size: clamp(30px, 2.7vw, 41px);
   font-weight: 380;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
 .stats span {
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .media-stage {
-  grid-column: 7 / span 5;
-  grid-row: 1 / span 3;
+  grid-column: 5 / span 5;
+  grid-row: 1 / span 2;
   width: 100%;
-  max-width: 610px;
-  min-height: 610px;
-  margin-top: 168px;
+  max-width: none;
+  min-height: 0;
+  margin-top: 38px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 22px;
+  gap: 12px;
   animation: enter-art 1200ms 180ms var(--ease-heavy) both;
 }
 
@@ -837,7 +844,7 @@ input:focus-visible {
 }
 
 .pattern-sheet--main {
-  width: 76%;
+  width: 88%;
   position: relative;
   z-index: 2;
 }
@@ -845,10 +852,10 @@ input:focus-visible {
 .pattern-sheet--peek {
   position: absolute;
   z-index: 1;
-  top: calc(62px + 18%);
-  right: 2%;
-  width: 36%;
-  padding: 16px 12px 12px;
+  top: calc(44px + 18%);
+  right: 0;
+  width: 34%;
+  padding: 12px 9px 9px;
   background: var(--paper);
 }
 
@@ -903,8 +910,8 @@ input:focus-visible {
 }
 
 .maker-ledger {
-  grid-row: 3;
-  margin-top: 24px;
+  grid-row: 1 / span 2;
+  margin-top: 38px;
   animation: enter-page 1100ms 220ms var(--ease-heavy) both;
 }
 
@@ -913,7 +920,7 @@ input:focus-visible {
 }
 
 .materials-heading {
-  min-height: 44px;
+  min-height: 34px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -921,7 +928,7 @@ input:focus-visible {
 
 .materials-heading h2 {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 520;
 }
 
@@ -939,7 +946,7 @@ input:focus-visible {
 }
 
 .material-grid--head {
-  min-height: 28px;
+  min-height: 24px;
   border-bottom: 0.5px solid var(--faint);
   color: #777771;
   font-size: 10px;
@@ -951,7 +958,7 @@ input:focus-visible {
 }
 
 .material-row {
-  min-height: 34px;
+  min-height: 30px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -990,8 +997,8 @@ input:focus-visible {
 
 .materials-more {
   width: 100%;
-  min-height: 42px;
-  margin-top: 4px;
+  min-height: 34px;
+  margin-top: 2px;
   padding: 0;
   border: 0;
   background: none;
@@ -1013,13 +1020,13 @@ input:focus-visible {
 
 .export-panel {
   width: 100%;
-  margin-top: 34px;
-  padding-top: 22px;
+  margin-top: 18px;
+  padding-top: 13px;
   border-top: 0.5px solid var(--rule);
 }
 
 .export-heading {
-  min-height: 34px;
+  min-height: 26px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -1027,7 +1034,7 @@ input:focus-visible {
 
 .export-heading h2 {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 520;
 }
 
@@ -1039,13 +1046,13 @@ input:focus-visible {
 .export-actions {
   width: 100%;
   display: grid;
-  gap: 10px;
+  gap: 2px;
 }
 
 .export-actions button {
   width: 100%;
-  min-height: 58px;
-  padding: 7px 0 8px;
+  min-height: 49px;
+  padding: 5px 0 6px;
   border: 0;
   background: none;
   display: flex;
@@ -1058,17 +1065,17 @@ input:focus-visible {
 
 .export-copy {
   display: grid;
-  gap: 6px;
+  gap: 3px;
 }
 
 .export-copy strong {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 520;
 }
 
 .export-copy small {
   color: #777771;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 400;
   line-height: 1.5;
 }
@@ -1164,21 +1171,34 @@ input:focus-visible {
     --page: min(100% - 48px, 1040px);
   }
 
-  .editor-column,
-  .maker-ledger {
+  .maker {
+    min-height: auto;
+    padding: 34px 0 72px;
+    grid-template-rows: auto auto auto;
+  }
+
+  .editor-column {
     grid-column: 1 / span 5;
   }
 
   .maker-intro {
-    grid-column: 1 / span 6;
+    grid-column: 1 / span 5;
   }
 
   .maker-intro h1 {
-    font-size: clamp(50px, 6vw, 68px);
+    font-size: clamp(42px, 5.2vw, 58px);
   }
 
   .media-stage {
     grid-column: 7 / span 6;
+    grid-row: 1 / span 2;
+    margin-top: 48px;
+  }
+
+  .maker-ledger {
+    grid-column: 7 / span 6;
+    grid-row: 3;
+    margin-top: 30px;
   }
 }
 
