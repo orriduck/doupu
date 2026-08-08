@@ -10,7 +10,10 @@ import { usePatternProcessor } from './hooks/usePatternProcessor'
 import type { PatternSettings, PatternView } from './types'
 
 const initialSettings: PatternSettings = {
-  columns: 64,
+  columns: 58,
+  rows: 58,
+  paletteId: 'mard-221',
+  imageFit: 'cover',
   maxColors: 24,
   dither: 0.2,
   removeWhite: false,
@@ -94,10 +97,6 @@ export default function App() {
 
         <div className="editor-column">
           <EditorControls settings={settings} onChange={setSettings} />
-          <div className="view-tabs" role="tablist" aria-label="预览模式">
-            <button role="tab" aria-selected={view === 'beads'} className={view === 'beads' ? 'is-active' : ''} onClick={() => setView('beads')}>效果</button>
-            <button role="tab" aria-selected={view === 'chart'} className={view === 'chart' ? 'is-active' : ''} onClick={() => setView('chart')}>图纸</button>
-          </div>
           <div className="stats" aria-live="polite">
             <div><strong>{totalLabel}</strong><span>颗</span></div>
             <div><strong>{colorLabel}</strong><span>色</span></div>
@@ -118,6 +117,13 @@ export default function App() {
             if (file) handleFile(file)
           }}
         >
+          <div className="preview-header">
+            <span>预览</span>
+            <div className="view-tabs" role="tablist" aria-label="预览模式">
+              <button role="tab" aria-selected={view === 'beads'} className={view === 'beads' ? 'is-active' : ''} onClick={() => setView('beads')}>效果图</button>
+              <button role="tab" aria-selected={view === 'chart'} className={view === 'chart' ? 'is-active' : ''} onClick={() => setView('chart')}>制作图纸</button>
+            </div>
+          </div>
           <div className="pattern-sheet pattern-sheet--main">
             <PatternCanvas result={result} view={view} highlightIndex={highlightIndex} label={view === 'beads' ? '拼豆效果预览' : '带符号和辅助线的拼豆图纸'} />
           </div>
@@ -167,7 +173,7 @@ export default function App() {
         <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">
           <GithubLogo size={19} weight="light" aria-hidden="true" />查看源码
         </a>
-        <p className="palette-disclaimer">默认采用 MARD 221 常用色号：H2 为白色，H7 为黑色。屏幕颜色仅作近似参考。</p>
+        <p className="palette-disclaimer">支持 MARD 221 与 Hama Midi 色号；屏幕颜色仅作近似参考，购买前请核对实体色卡。</p>
       </footer>
     </main>
   )

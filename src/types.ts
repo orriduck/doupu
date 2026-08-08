@@ -6,8 +6,14 @@ export interface BeadColor {
   symbol: string
 }
 
+export type PaletteId = 'mard-221' | 'hama-midi'
+export type ImageFit = 'cover' | 'contain'
+
 export interface PatternSettings {
   columns: number
+  rows: number
+  paletteId: PaletteId
+  imageFit: ImageFit
   maxColors: number
   dither: number
   removeWhite: boolean

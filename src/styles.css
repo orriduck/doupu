@@ -273,6 +273,37 @@ input:focus-visible {
   grid-template-columns: 88px 1fr;
 }
 
+.control-row--select {
+  grid-template-columns: 88px minmax(0, 1fr);
+}
+
+.select-control {
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-control select {
+  width: 100%;
+  min-height: 41px;
+  padding: 0 24px 0 0;
+  border: 0;
+  appearance: none;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  text-align: right;
+  text-align-last: right;
+}
+
+.select-control svg {
+  position: absolute;
+  right: 0;
+  pointer-events: none;
+}
+
 .control-row--button {
   grid-template-columns: 88px 1fr;
   cursor: pointer;
@@ -316,18 +347,88 @@ input:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-.view-tabs {
-  width: 100%;
-  height: 62px;
+.fit-control {
+  padding: 14px 0 16px;
   border-bottom: 0.5px solid var(--rule);
+}
+
+.fit-heading {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.fit-heading span:last-child {
+  color: #7d7d77;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.fit-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fit-options button {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 0.5px solid var(--faint);
+  background: transparent;
+  color: #777771;
+  cursor: pointer;
+  font-size: 12px;
+  transition: border-color 300ms var(--ease-heavy), color 300ms var(--ease-heavy), background-color 300ms var(--ease-heavy);
+}
+
+.fit-options button:hover,
+.fit-options button.is-active {
+  border-color: var(--ink);
+  background: rgba(17, 17, 15, 0.025);
+  color: var(--ink);
+}
+
+.fit-options button:active {
+  transform: translateY(1px);
+}
+
+.fit-control p {
+  margin: 10px 0 0;
+  color: #81817b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.preview-header {
+  position: relative;
+  z-index: 4;
+  width: 76%;
+  min-height: 40px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.preview-header > span {
+  padding-bottom: 11px;
+  color: #85857f;
+  font-size: 11px;
+}
+
+.view-tabs {
+  width: auto;
+  height: 40px;
   display: flex;
   align-items: end;
-  gap: 48px;
+  gap: 32px;
 }
 
 .view-tabs button {
-  height: 44px;
-  padding: 0 0 14px;
+  height: 40px;
+  padding: 0 0 11px;
   border: 0;
   background: none;
   color: #898983;
@@ -360,6 +461,7 @@ input:focus-visible {
 .stats {
   width: 100%;
   min-height: 98px;
+  margin-top: 18px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 24px;
@@ -401,8 +503,10 @@ input:focus-visible {
   margin-top: 168px;
   position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: flex-start;
+  gap: 22px;
   animation: enter-art 1200ms 180ms var(--ease-heavy) both;
 }
 
@@ -420,7 +524,7 @@ input:focus-visible {
 .pattern-sheet--peek {
   position: absolute;
   z-index: 1;
-  top: 21%;
+  top: calc(62px + 18%);
   right: 2%;
   width: 36%;
   padding: 16px 12px 12px;
@@ -873,19 +977,36 @@ input:focus-visible {
     grid-template-columns: 76px 1fr;
   }
 
+  .control-row--select {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .select-control select {
+    min-height: 53px;
+  }
+
   .control-row:has(input[type='range'])::after {
     left: 88px;
     right: 104px;
   }
 
-  .view-tabs {
-    height: 80px;
+  .fit-control {
+    padding: 17px 0 18px;
   }
 
-  .view-tabs button {
-    height: 52px;
-    padding-bottom: 17px;
-    font-size: 16px;
+  .fit-heading {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+
+  .fit-options button {
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .fit-control p {
+    margin-top: 12px;
+    font-size: 12px;
   }
 
   .stats {
@@ -905,7 +1026,36 @@ input:focus-visible {
     min-height: 360px;
     margin-top: 44px;
     padding: 24px 0 42px;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 22px;
+  }
+
+  .preview-header {
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+  }
+
+  .preview-header > span {
+    padding-bottom: 0;
+    font-size: 12px;
+  }
+
+  .view-tabs {
+    height: 48px;
+    align-items: center;
+    gap: 26px;
+  }
+
+  .view-tabs button {
+    height: 48px;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  .view-tabs button::after {
+    bottom: 2px;
   }
 
   .pattern-sheet--main {
@@ -913,7 +1063,7 @@ input:focus-visible {
   }
 
   .pattern-sheet--peek {
-    top: 19%;
+    top: calc(72px + 14%);
     right: 6%;
     width: 29%;
     padding: 10px 8px 8px;

@@ -6,6 +6,7 @@
 - [MARD 色号交叉参考](https://www.pixel-beads.com/zh/mard-bead-color-chart) — 用于核对 221 色体系、扩展系列与 H 系列编号。两者均为社区维护资料，实物仍应以用户持有的色卡为准。
 - [Hama Instructions](https://hama.dk/en/pages/instructions-1) — 拼放、熨烫纸与熨烫流程。
 - [Hama Colour Chart](https://hama.dk/en/pages/colour-chart) — 品牌色号与可用尺寸。
+- [Hama Interlocking Large Square Midi Pegboard](https://www.hamabeads.com/product/interlocking-large-square-midi-hama-beads-pegboard/) — 官方说明大方板含 841 个钉位（29 × 29）且可互相拼接；用于豆谱的实体板型预设。
 - [Hama 2026 Colour Card PDF](https://cdn.shopify.com/s/files/1/0726/3771/0492/files/colour-chart-number.pdf?v=1777215620) — 不同品牌编号体系的对照参考，不再作为豆谱默认色盘。
 - [Perler Standard Fusing Method](https://perler.com/blogs/projects/standard-fusing-method) — 熨烫纸、均匀圆周移动与翻面的工艺参考。
 - [CIE 200:2011 / CIEDE2000](https://www.cie.co.at/publications/colorimetry-part-6-ciede2000-colour-difference-formula-1) — 感知色差匹配方法。
@@ -24,3 +25,4 @@
 - 主图控制在页面约一半以内，以留白建立编辑感，不使用应用后台式卡片堆叠。
 - 中文衬线标题搭配中性无衬线正文；仅保留中文和少量功能性英文。
 - 红色只用于当前状态与交互提示，网格线保持细、轻、可打印。
+- 尺寸采用 29 × 29 实体板模块；图片适配明确区分保持比例的裁切铺满与完整缩放。

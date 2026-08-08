@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { STUDIO_PALETTE } from '../data/palette'
+import { getPalette } from '../data/palettes'
+import { getImageDrawRect } from '../lib/imageFit'
 import type { PatternResult, PatternSettings, SourceImage } from '../types'
 
 interface WorkerResult {
@@ -112,8 +113,7 @@ export function usePatternProcessor(settings: PatternSettings) {
     if (!source || !workerRef.current) return
     setIsProcessing(true)
     const timer = window.setTimeout(() => {
-      const columns = settings.columns
-      const rows = Math.max(12, Math.min(128, Math.round(columns * source.height / source.width)))
+      const { columns, rows } = settings
       const canvas = document.createElement('canvas')
       canvas.width = columns
       canvas.height = rows
@@ -121,7 +121,8 @@ export function usePatternProcessor(settings: PatternSettings) {
       if (!context) return
       context.imageSmoothingEnabled = true
       context.imageSmoothingQuality = 'high'
-      context.drawImage(source.bitmap, 0, 0, columns, rows)
+      const drawRect = getImageDrawRect(source.width, source.height, columns, rows, settings.imageFit)
+      context.drawImage(source.bitmap, drawRect.x, drawRect.y, drawRect.width, drawRect.height)
       const imageData = context.getImageData(0, 0, columns, rows)
       const id = requestRef.current + 1
       requestRef.current = id
@@ -133,7 +134,7 @@ export function usePatternProcessor(settings: PatternSettings) {
         maxColors: settings.maxColors,
         dither: settings.dither,
         removeWhite: settings.removeWhite,
-        palette: STUDIO_PALETTE,
+        palette: getPalette(settings.paletteId),
       }, [imageData.data.buffer])
     }, 90)
     return () => window.clearTimeout(timer)
