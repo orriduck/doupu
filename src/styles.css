@@ -359,21 +359,25 @@ input:focus-visible {
 
 .stats {
   width: 100%;
-  min-height: 88px;
-  border-bottom: 0.5px solid var(--rule);
+  min-height: 98px;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  column-gap: 24px;
 }
 
 .stats > div {
-  display: flex;
+  padding: 0 0 10px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
   align-items: baseline;
+  align-content: end;
+  justify-content: start;
   gap: 9px;
 }
 
 .stats > div + div {
-  padding-left: 54px;
-  border-left: 0.5px solid var(--rule);
+  padding-left: 0;
 }
 
 .stats strong {
@@ -475,7 +479,7 @@ input:focus-visible {
 
 .maker-ledger {
   grid-row: 3;
-  margin-top: 12px;
+  margin-top: 24px;
   animation: enter-page 1100ms 220ms var(--ease-heavy) both;
 }
 
@@ -511,6 +515,7 @@ input:focus-visible {
 
 .material-grid--head {
   min-height: 28px;
+  border-bottom: 0.5px solid var(--faint);
   color: #777771;
   font-size: 10px;
 }
@@ -521,10 +526,9 @@ input:focus-visible {
 }
 
 .material-row {
-  min-height: 32px;
+  min-height: 34px;
   padding: 0;
   border: 0;
-  border-bottom: 0.5px solid var(--faint);
   background: transparent;
   cursor: pointer;
   font-size: 12px;
@@ -562,9 +566,9 @@ input:focus-visible {
 .materials-more {
   width: 100%;
   min-height: 42px;
+  margin-top: 4px;
   padding: 0;
   border: 0;
-  border-bottom: 0.5px solid var(--rule);
   background: none;
   display: flex;
   align-items: center;
@@ -582,39 +586,78 @@ input:focus-visible {
   transform: rotate(180deg);
 }
 
+.export-panel {
+  width: 100%;
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 0.5px solid var(--rule);
+}
+
+.export-heading {
+  min-height: 34px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.export-heading h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 520;
+}
+
+.export-heading span {
+  color: #8a8a84;
+  font-size: 11px;
+}
+
 .export-actions {
   width: 100%;
-  margin-top: 18px;
+  display: grid;
+  gap: 10px;
 }
 
 .export-actions button {
   width: 100%;
-  min-height: 54px;
-  padding: 0;
+  min-height: 58px;
+  padding: 7px 0 8px;
   border: 0;
-  border-bottom: 0.5px solid var(--rule);
   background: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  font-size: 15px;
   text-align: left;
   transition: color 500ms var(--ease-heavy), opacity 500ms var(--ease-heavy);
 }
 
-.export-actions button:first-child {
-  border-top: 0.5px solid var(--rule);
-  font-family: 'Noto Serif SC Variable', 'Songti SC', serif;
-  font-size: 27px;
+.export-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.export-copy strong {
+  font-size: 16px;
+  font-weight: 520;
+}
+
+.export-copy small {
+  color: #777771;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .export-actions button:hover:not(:disabled) {
   color: var(--red);
 }
 
+.export-actions button:hover:not(:disabled) small {
+  color: inherit;
+}
+
 .export-actions button:hover:not(:disabled) svg {
-  transform: translateX(8px);
+  transform: translateY(4px);
 }
 
 .export-actions button svg {
@@ -846,11 +889,7 @@ input:focus-visible {
   }
 
   .stats {
-    min-height: 110px;
-  }
-
-  .stats > div {
-    justify-content: center;
+    min-height: 118px;
   }
 
   .stats > div + div {
@@ -886,7 +925,7 @@ input:focus-visible {
 
   .maker-ledger {
     order: 4;
-    margin-top: 0;
+    margin-top: 12px;
   }
 
   .materials-heading {
@@ -916,16 +955,21 @@ input:focus-visible {
     font-size: 12px;
   }
 
-  .export-actions {
-    margin-top: 32px;
+  .export-panel {
+    margin-top: 38px;
+    padding-top: 24px;
   }
 
   .export-actions button {
-    min-height: 62px;
+    min-height: 70px;
   }
 
-  .export-actions button:first-child {
-    font-size: 29px;
+  .export-copy strong {
+    font-size: 17px;
+  }
+
+  .export-copy small {
+    font-size: 12px;
   }
 
   .upload-action--compact {

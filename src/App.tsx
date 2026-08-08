@@ -1,4 +1,4 @@
-import { ArrowRight, GithubLogo, List, X } from '@phosphor-icons/react'
+import { DownloadSimple, GithubLogo, List, X } from '@phosphor-icons/react'
 import { useCallback, useEffect, useState } from 'react'
 import { EditorControls } from './components/EditorControls'
 import { Logo } from './components/Logo'
@@ -22,7 +22,7 @@ export default function App() {
   const [highlightIndex, setHighlightIndex] = useState<number | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [exportStatus, setExportStatus] = useState<'idle' | 'pdf' | 'png' | 'done'>('idle')
+  const [exportStatus, setExportStatus] = useState<'idle' | 'pdf' | 'png' | 'pdf-done' | 'png-done'>('idle')
   const { source, result, isProcessing, error, loadFile } = usePatternProcessor(settings)
 
   const handleFile = useCallback((file: File) => {
@@ -50,7 +50,7 @@ export default function App() {
       } else {
         await downloadPatternPng(result, source?.name ?? 'doupu-pattern')
       }
-      setExportStatus('done')
+      setExportStatus(kind === 'pdf' ? 'pdf-done' : 'png-done')
       window.setTimeout(() => setExportStatus('idle'), 2200)
     } catch {
       setExportStatus('idle')
@@ -131,16 +131,28 @@ export default function App() {
 
         <div className="maker-ledger">
           <MaterialsLedger result={result} highlightIndex={highlightIndex} onHighlight={setHighlightIndex} />
-          <div className="export-actions">
-            <button type="button" onClick={() => void runExport('pdf')} disabled={!result || exportStatus !== 'idle'}>
-              <span>{exportStatus === 'pdf' ? '正在排版…' : exportStatus === 'done' ? '已下载' : '导出 PDF'}</span>
-              <ArrowRight size={28} weight="thin" aria-hidden="true" />
-            </button>
-            <button type="button" onClick={() => void runExport('png')} disabled={!result || exportStatus !== 'idle'}>
-              <span>{exportStatus === 'png' ? '正在生成…' : '图纸 PNG'}</span>
-              <ArrowRight size={22} weight="thin" aria-hidden="true" />
-            </button>
-          </div>
+          <section className="export-panel" aria-labelledby="export-title">
+            <div className="export-heading">
+              <h2 id="export-title">下载</h2>
+              <span>选择使用方式</span>
+            </div>
+            <div className="export-actions">
+              <button type="button" onClick={() => void runExport('pdf')} disabled={!result || exportStatus !== 'idle'}>
+                <span className="export-copy">
+                  <strong>{exportStatus === 'pdf' ? '正在排版…' : exportStatus === 'pdf-done' ? '制作图纸已下载' : '打印制作图纸'}</strong>
+                  <small>PDF · 含效果图、分页图纸和豆子清单</small>
+                </span>
+                <DownloadSimple size={23} weight="light" aria-hidden="true" />
+              </button>
+              <button type="button" onClick={() => void runExport('png')} disabled={!result || exportStatus !== 'idle'}>
+                <span className="export-copy">
+                  <strong>{exportStatus === 'png' ? '正在生成…' : exportStatus === 'png-done' ? '图纸图片已下载' : '保存图纸图片'}</strong>
+                  <small>PNG · 单张带网格和格内符号的图纸</small>
+                </span>
+                <DownloadSimple size={23} weight="light" aria-hidden="true" />
+              </button>
+            </div>
+          </section>
           <UploadAction onFile={handleFile} compact />
         </div>
       </section>
