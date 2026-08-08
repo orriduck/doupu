@@ -106,67 +106,69 @@ export default function App() {
           <EditorControls source={source} settings={settings} onChange={setSettings} />
         </div>
 
-        <div
-          className={`media-stage ${isDragging ? 'is-dragging' : ''}`}
-          onDragEnter={(event) => { event.preventDefault(); setIsDragging(true) }}
-          onDragOver={(event) => event.preventDefault()}
-          onDragLeave={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsDragging(false)
-          }}
-          onDrop={(event) => {
-            event.preventDefault()
-            setIsDragging(false)
-            const file = Array.from(event.dataTransfer.files).find((item) => item.type.startsWith('image/'))
-            if (file) handleFile(file)
-          }}
-        >
-          <div className="preview-header">
-            <span>{view === 'chart' && occupiedBounds ? `${occupiedBounds.columns} × ${occupiedBounds.rows} 图纸` : '预览'}</span>
-            <div className="view-tabs" role="tablist" aria-label="预览模式">
-              <button role="tab" aria-selected={view === 'beads'} className={view === 'beads' ? 'is-active' : ''} onClick={() => setView('beads')}>效果图</button>
-              <button role="tab" aria-selected={view === 'chart'} className={view === 'chart' ? 'is-active' : ''} onClick={() => setView('chart')}>制作图纸</button>
+        <div className="workbench-column">
+          <div
+            className={`media-stage ${isDragging ? 'is-dragging' : ''}`}
+            onDragEnter={(event) => { event.preventDefault(); setIsDragging(true) }}
+            onDragOver={(event) => event.preventDefault()}
+            onDragLeave={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsDragging(false)
+            }}
+            onDrop={(event) => {
+              event.preventDefault()
+              setIsDragging(false)
+              const file = Array.from(event.dataTransfer.files).find((item) => item.type.startsWith('image/'))
+              if (file) handleFile(file)
+            }}
+          >
+            <div className="preview-header">
+              <span>{view === 'chart' && occupiedBounds ? `${occupiedBounds.columns} × ${occupiedBounds.rows} 图纸` : '预览'}</span>
+              <div className="view-tabs" role="tablist" aria-label="预览模式">
+                <button role="tab" aria-selected={view === 'beads'} className={view === 'beads' ? 'is-active' : ''} onClick={() => setView('beads')}>效果图</button>
+                <button role="tab" aria-selected={view === 'chart'} className={view === 'chart' ? 'is-active' : ''} onClick={() => setView('chart')}>制作图纸</button>
+              </div>
             </div>
+            <div className="pattern-sheet pattern-sheet--main">
+              <PatternCanvas result={result} view={view} highlightIndex={highlightIndex} label={view === 'beads' ? '拼豆效果预览' : '带色块和辅助线的拼豆图纸预览'} />
+            </div>
+            <div className="pattern-sheet pattern-sheet--peek" aria-hidden="true">
+              <div className="peek-meta"><span>{result ? `${result.columns} × ${result.rows}` : '—'}</span><span>{totalLabel} 颗</span></div>
+              <PatternCanvas result={result} view={view === 'beads' ? 'chart' : 'beads'} label="另一种预览" />
+            </div>
+            {isProcessing && <div className="processing"><span />正在重新配色</div>}
+            {isDragging && <div className="drop-message">松开即可换图</div>}
           </div>
-          <div className="pattern-sheet pattern-sheet--main">
-            <PatternCanvas result={result} view={view} highlightIndex={highlightIndex} label={view === 'beads' ? '拼豆效果预览' : '带色块和辅助线的拼豆图纸预览'} />
-          </div>
-          <div className="pattern-sheet pattern-sheet--peek" aria-hidden="true">
-            <div className="peek-meta"><span>{result ? `${result.columns} × ${result.rows}` : '—'}</span><span>{totalLabel} 颗</span></div>
-            <PatternCanvas result={result} view={view === 'beads' ? 'chart' : 'beads'} label="另一种预览" />
-          </div>
-          {isProcessing && <div className="processing"><span />正在重新配色</div>}
-          {isDragging && <div className="drop-message">松开即可换图</div>}
-        </div>
 
-        <div className="maker-ledger">
-          <div className="stats" aria-live="polite">
-            <div><strong>{totalLabel}</strong><span>颗</span></div>
-            <div><strong>{colorLabel}</strong><span>色</span></div>
+          <div className="maker-ledger">
+            <div className="stats" aria-live="polite">
+              <div><strong>{totalLabel}</strong><span>颗</span></div>
+              <div><strong>{colorLabel}</strong><span>色</span></div>
+            </div>
+            <MaterialsLedger result={result} highlightIndex={highlightIndex} onHighlight={setHighlightIndex} />
+            <section className="export-panel" aria-labelledby="export-title">
+              <div className="export-heading">
+                <h2 id="export-title">下载</h2>
+                <span>选择使用方式</span>
+              </div>
+              <div className="export-actions">
+                <button type="button" onClick={() => void runExport('pdf')} disabled={!result || exportStatus !== 'idle'}>
+                  <span className="export-copy">
+                    <strong>{exportStatus === 'pdf' ? '正在排版…' : exportStatus === 'pdf-done' ? '制作图纸已下载' : '打印制作图纸'}</strong>
+                    <small>PDF · 横向分页，每片重叠 2 行与 2 列</small>
+                  </span>
+                  <DownloadSimple size={23} weight="light" aria-hidden="true" />
+                </button>
+                <button type="button" onClick={() => void runExport('png')} disabled={!result || exportStatus !== 'idle'}>
+                  <span className="export-copy">
+                    <strong>{exportStatus === 'png' ? '正在生成…' : exportStatus === 'png-done' ? '图纸图片已下载' : '保存图纸图片'}</strong>
+                    <small>PNG · 单张带行列号、网格和格内符号</small>
+                  </span>
+                  <DownloadSimple size={23} weight="light" aria-hidden="true" />
+                </button>
+              </div>
+            </section>
+            <UploadAction onFile={handleFile} compact />
           </div>
-          <MaterialsLedger result={result} highlightIndex={highlightIndex} onHighlight={setHighlightIndex} />
-          <section className="export-panel" aria-labelledby="export-title">
-            <div className="export-heading">
-              <h2 id="export-title">下载</h2>
-              <span>选择使用方式</span>
-            </div>
-            <div className="export-actions">
-              <button type="button" onClick={() => void runExport('pdf')} disabled={!result || exportStatus !== 'idle'}>
-                <span className="export-copy">
-                  <strong>{exportStatus === 'pdf' ? '正在排版…' : exportStatus === 'pdf-done' ? '制作图纸已下载' : '打印制作图纸'}</strong>
-                  <small>PDF · 横向分页，每片重叠 2 行与 2 列</small>
-                </span>
-                <DownloadSimple size={23} weight="light" aria-hidden="true" />
-              </button>
-              <button type="button" onClick={() => void runExport('png')} disabled={!result || exportStatus !== 'idle'}>
-                <span className="export-copy">
-                  <strong>{exportStatus === 'png' ? '正在生成…' : exportStatus === 'png-done' ? '图纸图片已下载' : '保存图纸图片'}</strong>
-                  <small>PNG · 单张带行列号、网格和格内符号</small>
-                </span>
-                <DownloadSimple size={23} weight="light" aria-hidden="true" />
-              </button>
-            </div>
-          </section>
-          <UploadAction onFile={handleFile} compact />
         </div>
       </section>
 
