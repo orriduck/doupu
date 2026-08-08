@@ -49,6 +49,7 @@ export function usePatternProcessor(settings: PatternSettings) {
       const previewUrl = URL.createObjectURL(blob)
       const next: SourceImage = {
         bitmap,
+        blob,
         name,
         width: bitmap.width,
         height: bitmap.height,
@@ -70,6 +71,16 @@ export function usePatternProcessor(settings: PatternSettings) {
   const loadFile = useCallback(async (file: File) => {
     await replaceSource(file, file.name.replace(/\.[^.]+$/, '') || '我的拼豆图案')
   }, [replaceSource])
+
+  const clearSource = useCallback(() => {
+    const current = sourceRef.current
+    current?.bitmap.close()
+    if (current?.previewUrl.startsWith('blob:')) URL.revokeObjectURL(current.previewUrl)
+    sourceRef.current = null
+    setSource(null)
+    setResult(null)
+    setIsProcessing(false)
+  }, [])
 
   useEffect(() => {
     const worker = new Worker(new URL('../workers/pattern.worker.ts', import.meta.url), { type: 'module' })
@@ -145,5 +156,5 @@ export function usePatternProcessor(settings: PatternSettings) {
     return () => window.clearTimeout(timer)
   }, [settings, source])
 
-  return { source, result, isProcessing, error, loadFile }
+  return { source, result, isProcessing, error, loadFile, clearSource }
 }
