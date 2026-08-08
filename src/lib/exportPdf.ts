@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf'
 import { drawPattern } from './drawPattern'
+import { getOccupiedBounds } from './patternBounds'
 import type { PatternResult } from '../types'
 
 // A4 landscape proportions at roughly 150 dpi. Keeping the raster canvas and
@@ -67,7 +68,11 @@ function drawCover(result: PatternResult, name: string) {
   context.fillText(title, 78, 280)
   context.font = '24px "Geist", sans-serif'
   context.fillStyle = '#5f5f59'
-  context.fillText(`${result.columns} × ${result.rows}  /  ${result.totalBeads.toLocaleString()} BEADS  /  ${result.palette.length} COLORS`, 82, 330)
+  const occupied = getOccupiedBounds(result)
+  const usedSize = occupied.columns === result.columns && occupied.rows === result.rows
+    ? ''
+    : `  /  ${occupied.columns} × ${occupied.rows} USED`
+  context.fillText(`${result.columns} × ${result.rows} BOARD${usedSize}  /  ${result.totalBeads.toLocaleString()} BEADS  /  ${result.palette.length} COLORS`, 82, 330)
 
   const previewSize = 960
   const preview = document.createElement('canvas')
@@ -215,8 +220,9 @@ function drawChartPage(
 export async function exportPatternPdf(result: PatternResult, name: string) {
   const tileColumns = 42
   const tileRows = 29
-  const horizontalPages = Math.ceil(result.columns / tileColumns)
-  const verticalPages = Math.ceil(result.rows / tileRows)
+  const occupied = getOccupiedBounds(result)
+  const horizontalPages = Math.ceil(occupied.columns / tileColumns)
+  const verticalPages = Math.ceil(occupied.rows / tileRows)
   const chartPageCount = horizontalPages * verticalPages
   const pdf = new jsPDF({
     orientation: 'landscape',
@@ -229,10 +235,10 @@ export async function exportPatternPdf(result: PatternResult, name: string) {
   let pageNumber = 1
   for (let pageRow = 0; pageRow < verticalPages; pageRow += 1) {
     for (let pageColumn = 0; pageColumn < horizontalPages; pageColumn += 1) {
-      const startColumn = pageColumn * tileColumns
-      const startRow = pageRow * tileRows
-      const endColumn = Math.min(result.columns, startColumn + tileColumns)
-      const endRow = Math.min(result.rows, startRow + tileRows)
+      const startColumn = occupied.startColumn + pageColumn * tileColumns
+      const startRow = occupied.startRow + pageRow * tileRows
+      const endColumn = Math.min(occupied.endColumn, startColumn + tileColumns)
+      const endRow = Math.min(occupied.endRow, startRow + tileRows)
       addCanvas(pdf, drawChartPage(
         result,
         name,

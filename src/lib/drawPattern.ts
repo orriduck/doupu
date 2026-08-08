@@ -1,4 +1,5 @@
 import type { PatternResult, PatternView } from '../types'
+import { getOccupiedBounds } from './patternBounds'
 
 interface DrawOptions {
   highlightIndex?: number | null
@@ -11,7 +12,10 @@ interface DrawOptions {
 
 function luminance(hex: string) {
   const value = hex.replace('#', '')
-  const channels = [0, 2, 4].map((offset) => Number.parseInt(value.slice(offset, offset + 2), 16) / 255)
+  const channels = [0, 2, 4].map((offset) => {
+    const channel = Number.parseInt(value.slice(offset, offset + 2), 16) / 255
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+  })
   return channels.reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0)
 }
 
@@ -82,11 +86,11 @@ export function drawPattern(
         context.lineWidth = Math.max(0.4, minCell * 0.04)
         context.stroke()
       } else {
-        context.fillStyle = `${color.hex}2e`
+        context.fillStyle = color.hex
         context.fillRect(x, y, cellWidth, cellHeight)
         if ((options.cellLabels ?? true) && minCell >= 5) {
           const labelScale = color.symbol.length >= 3 ? 0.34 : color.symbol.length === 2 ? 0.42 : 0.5
-          context.fillStyle = luminance(color.hex) > 0.7 ? '#11110f' : color.hex
+          context.fillStyle = luminance(color.hex) > 0.179 ? '#000000' : '#ffffff'
           context.font = `600 ${Math.max(3.5, minCell * labelScale)}px "Geist", sans-serif`
           context.textAlign = 'center'
           context.textBaseline = 'middle'
@@ -121,17 +125,31 @@ export function drawPattern(
 }
 
 export function createPatternCanvas(result: PatternResult, view: PatternView, targetWidth = 1800) {
+  const bounds = view === 'chart' ? getOccupiedBounds(result) : {
+    startColumn: 0,
+    startRow: 0,
+    endColumn: result.columns,
+    endRow: result.rows,
+    columns: result.columns,
+    rows: result.rows,
+  }
   const canvas = document.createElement('canvas')
   canvas.width = targetWidth
-  canvas.height = Math.round(targetWidth * result.rows / result.columns)
+  canvas.height = Math.round(targetWidth * bounds.rows / bounds.columns)
   const context = canvas.getContext('2d')
   if (!context) throw new Error('无法创建导出画布。')
-  drawPattern(context, result, view, canvas.width, canvas.height)
+  drawPattern(context, result, view, canvas.width, canvas.height, {
+    startColumn: bounds.startColumn,
+    startRow: bounds.startRow,
+    endColumn: bounds.endColumn,
+    endRow: bounds.endRow,
+  })
   return canvas
 }
 
 export async function downloadPatternPng(result: PatternResult, name: string) {
-  const canvas = createPatternCanvas(result, 'chart', Math.min(4096, Math.max(1800, result.columns * 40)))
+  const bounds = getOccupiedBounds(result)
+  const canvas = createPatternCanvas(result, 'chart', Math.min(4096, Math.max(1800, bounds.columns * 40)))
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((value) => value ? resolve(value) : reject(new Error('PNG 生成失败')), 'image/png')
   })

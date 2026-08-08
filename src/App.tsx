@@ -1,11 +1,12 @@
 import { DownloadSimple, GithubLogo, List, X } from '@phosphor-icons/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { EditorControls } from './components/EditorControls'
 import { Logo } from './components/Logo'
 import { MaterialsLedger } from './components/MaterialsLedger'
 import { PatternCanvas } from './components/PatternCanvas'
 import { UploadAction } from './components/UploadAction'
 import { downloadPatternPng } from './lib/drawPattern'
+import { getOccupiedBounds } from './lib/patternBounds'
 import { usePatternProcessor } from './hooks/usePatternProcessor'
 import type { PatternSettings, PatternView } from './types'
 
@@ -66,6 +67,7 @@ export default function App() {
 
   const totalLabel = result?.totalBeads.toLocaleString() ?? '—'
   const colorLabel = result?.palette.length ?? '—'
+  const occupiedBounds = useMemo(() => result ? getOccupiedBounds(result) : null, [result])
 
   return (
     <main className="site-shell" id="top">
@@ -122,7 +124,7 @@ export default function App() {
           }}
         >
           <div className="preview-header">
-            <span>预览</span>
+            <span>{view === 'chart' && occupiedBounds ? `${occupiedBounds.columns} × ${occupiedBounds.rows} 图纸` : '预览'}</span>
             <div className="view-tabs" role="tablist" aria-label="预览模式">
               <button role="tab" aria-selected={view === 'beads'} className={view === 'beads' ? 'is-active' : ''} onClick={() => setView('beads')}>效果图</button>
               <button role="tab" aria-selected={view === 'chart'} className={view === 'chart' ? 'is-active' : ''} onClick={() => setView('chart')}>制作图纸</button>

@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { drawPattern } from '../lib/drawPattern'
+import { getOccupiedBounds } from '../lib/patternBounds'
 import type { PatternResult, PatternView } from '../types'
 
 interface PatternCanvasProps {
@@ -12,6 +13,7 @@ interface PatternCanvasProps {
 
 export function PatternCanvas({ result, view, highlightIndex, className = '', label }: PatternCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const visibleBounds = useMemo(() => result && view === 'chart' ? getOccupiedBounds(result) : null, [result, view])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -30,19 +32,23 @@ export function PatternCanvas({ result, view, highlightIndex, className = '', la
       drawPattern(context, result, view, bounds.width, bounds.height, {
         highlightIndex,
         cellLabels: false,
+        startColumn: visibleBounds?.startColumn,
+        startRow: visibleBounds?.startRow,
+        endColumn: visibleBounds?.endColumn,
+        endRow: visibleBounds?.endRow,
       })
     }
     render()
     const observer = new ResizeObserver(render)
     observer.observe(canvas)
     return () => observer.disconnect()
-  }, [highlightIndex, result, view])
+  }, [highlightIndex, result, view, visibleBounds])
 
   return (
     <canvas
       ref={canvasRef}
       className={`pattern-canvas ${className}`}
-      style={{ aspectRatio: result ? `${result.columns} / ${result.rows}` : '1 / 1' }}
+      style={{ aspectRatio: result ? `${visibleBounds?.columns ?? result.columns} / ${visibleBounds?.rows ?? result.rows}` : '1 / 1' }}
       role="img"
       aria-label={label}
     />
