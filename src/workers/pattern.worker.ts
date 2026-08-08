@@ -1,7 +1,8 @@
 /// <reference lib="webworker" />
 
 import { deltaE2000, hexToRgb, rgbToLab } from '../lib/color'
-import type { BeadColor } from '../types'
+import { createVisibilityMask } from '../lib/background'
+import type { BackgroundMode, BeadColor } from '../types'
 
 interface PatternRequest {
   id: number
@@ -10,19 +11,20 @@ interface PatternRequest {
   rows: number
   maxColors: number
   dither: number
-  removeWhite: boolean
+  backgroundMode: BackgroundMode
+  backgroundTolerance: number
   palette: BeadColor[]
 }
 
 const ctx: DedicatedWorkerGlobalScope = self as unknown as DedicatedWorkerGlobalScope
 
 ctx.onmessage = (event: MessageEvent<PatternRequest>) => {
-  const { id, pixels, columns, rows, maxColors, dither, removeWhite, palette } = event.data
+  const { id, pixels, columns, rows, maxColors, dither, backgroundMode, backgroundTolerance, palette } = event.data
   const source = new Uint8ClampedArray(pixels)
   const paletteRgb = palette.map((color) => hexToRgb(color.hex))
   const paletteLab = paletteRgb.map(([r, g, b]) => rgbToLab(r, g, b))
   const usage = new Uint32Array(palette.length)
-  const visible = new Uint8Array(columns * rows)
+  const visible = createVisibilityMask(source, columns, rows, backgroundMode, backgroundTolerance)
 
   const nearestFrom = (r: number, g: number, b: number, indexes: number[]) => {
     const lab = rgbToLab(r, g, b)
@@ -40,22 +42,11 @@ ctx.onmessage = (event: MessageEvent<PatternRequest>) => {
 
   const allIndexes = palette.map((_, index) => index)
   for (let cell = 0; cell < columns * rows; cell += 1) {
+    if (!visible[cell]) continue
     const pixel = cell * 4
     const r = source[pixel]
     const g = source[pixel + 1]
     const b = source[pixel + 2]
-    const alpha = source[pixel + 3]
-    // Generated artwork and phone photos often use a warm paper white rather
-    // than pure RGB white. Keep the heuristic intentionally conservative, but
-    // include ivory backgrounds so the "去白底" control has practical value.
-    const isPaper = removeWhite
-      && alpha > 16
-      && r > 222
-      && g > 216
-      && b > 202
-      && Math.max(r, g, b) - Math.min(r, g, b) < 34
-    if (alpha < 64 || isPaper) continue
-    visible[cell] = 1
     usage[nearestFrom(r, g, b, allIndexes)] += 1
   }
 

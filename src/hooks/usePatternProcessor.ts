@@ -137,7 +137,8 @@ export function usePatternProcessor(settings: PatternSettings) {
         rows,
         maxColors: settings.maxColors,
         dither: settings.dither,
-        removeWhite: settings.removeWhite,
+        backgroundMode: settings.backgroundMode,
+        backgroundTolerance: settings.backgroundTolerance,
         palette: getPalette(settings.paletteId),
       }, [imageData.data.buffer])
     }, 90)

@@ -8,6 +8,7 @@ export interface BeadColor {
 
 export type PaletteId = 'mard-221' | 'hama-midi'
 export type ImageFit = 'cover' | 'contain'
+export type BackgroundMode = 'keep' | 'edge'
 
 export interface PatternSettings {
   columns: number
@@ -19,7 +20,8 @@ export interface PatternSettings {
   cropZoom: number
   maxColors: number
   dither: number
-  removeWhite: boolean
+  backgroundMode: BackgroundMode
+  backgroundTolerance: number
 }
 
 export interface PatternResult {

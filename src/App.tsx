@@ -20,7 +20,8 @@ const initialSettings: PatternSettings = {
   cropZoom: 1,
   maxColors: 24,
   dither: 0.2,
-  removeWhite: false,
+  backgroundMode: 'keep',
+  backgroundTolerance: 10,
 }
 
 export default function App() {

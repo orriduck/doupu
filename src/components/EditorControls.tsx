@@ -1,5 +1,5 @@
-import { CaretDown } from '@phosphor-icons/react'
 import { CropEditor } from './CropEditor'
+import { EditorialSelect, type EditorialOption } from './EditorialSelect'
 import { BOARD_PRESETS } from '../data/boards'
 import { PALETTE_OPTIONS } from '../data/palettes'
 import type { PatternSettings, SourceImage } from '../types'
@@ -16,38 +16,34 @@ export function EditorControls({ source, settings, onChange }: EditorControlsPro
   }
 
   const boardValue = `${settings.columns}x${settings.rows}`
+  const paletteOptions: EditorialOption<PatternSettings['paletteId']>[] = PALETTE_OPTIONS.map((option) => ({
+    value: option.id,
+    label: option.label,
+    meta: option.id === 'mard-221' ? '221 色系' : 'Midi 色系',
+  }))
+  const boardOptions: EditorialOption<string>[] = BOARD_PRESETS.map((option) => {
+    const [label, meta] = option.label.split(' · ')
+    return { value: option.value, label, meta }
+  })
 
   return (
     <div className="editor-controls" aria-label="图案设置">
-      <label className="control-row control-row--select">
+      <div className="control-row control-row--select">
         <span>色盘</span>
-        <span className="select-control">
-          <select
-            value={settings.paletteId}
-            onChange={(event) => update('paletteId', event.currentTarget.value as PatternSettings['paletteId'])}
-            aria-label="实体豆色盘"
-          >
-            {PALETTE_OPTIONS.map((option) => <option value={option.id} key={option.id}>{option.label}</option>)}
-          </select>
-          <CaretDown size={14} weight="light" aria-hidden="true" />
-        </span>
-      </label>
-      <label className="control-row control-row--select">
+        <EditorialSelect value={settings.paletteId} options={paletteOptions} ariaLabel="实体豆色盘" onChange={(value) => update('paletteId', value)} />
+      </div>
+      <div className="control-row control-row--select">
         <span>尺寸</span>
-        <span className="select-control">
-          <select
-            value={boardValue}
-            onChange={(event) => {
-              const preset = BOARD_PRESETS.find((option) => option.value === event.currentTarget.value)
-              if (preset) onChange({ ...settings, columns: preset.columns, rows: preset.rows })
-            }}
-            aria-label="实体豆板尺寸"
-          >
-            {BOARD_PRESETS.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}
-          </select>
-          <CaretDown size={14} weight="light" aria-hidden="true" />
-        </span>
-      </label>
+        <EditorialSelect
+          value={boardValue}
+          options={boardOptions}
+          ariaLabel="实体豆板尺寸"
+          onChange={(value) => {
+            const preset = BOARD_PRESETS.find((option) => option.value === value)
+            if (preset) onChange({ ...settings, columns: preset.columns, rows: preset.rows })
+          }}
+        />
+      </div>
       <div className="fit-control">
         <div className="fit-heading"><span>图片适配</span><span>{settings.columns} × {settings.rows}</span></div>
         <div className="fit-options" role="group" aria-label="图片适配方式">
@@ -83,15 +79,21 @@ export function EditorControls({ source, settings, onChange }: EditorControlsPro
         />
         <span className="control-value">{Math.round(settings.dither * 100)}%</span>
       </label>
-      <button
-        type="button"
-        className="control-row control-row--button"
-        onClick={() => update('removeWhite', !settings.removeWhite)}
-        aria-pressed={settings.removeWhite}
-      >
-        <span>背景</span>
-        <span className="control-value">{settings.removeWhite ? '去白底' : '保留'}</span>
-      </button>
+      <div className="background-control">
+        <div className="background-heading"><span>背景</span><span>{settings.backgroundMode === 'edge' ? '边缘去背' : '保留'}</span></div>
+        <div className="background-options" role="group" aria-label="背景处理方式">
+          <button type="button" className={settings.backgroundMode === 'keep' ? 'is-active' : ''} aria-pressed={settings.backgroundMode === 'keep'} onClick={() => update('backgroundMode', 'keep')}>保留</button>
+          <button type="button" className={settings.backgroundMode === 'edge' ? 'is-active' : ''} aria-pressed={settings.backgroundMode === 'edge'} onClick={() => update('backgroundMode', 'edge')}>边缘去背</button>
+        </div>
+        {settings.backgroundMode === 'edge' && (
+          <label className="background-range">
+            <span>清理范围</span>
+            <input type="range" min="6" max="30" step="1" value={settings.backgroundTolerance} onChange={(event) => update('backgroundTolerance', Number(event.currentTarget.value))} aria-label="背景清理范围" />
+            <span>{settings.backgroundTolerance}</span>
+          </label>
+        )}
+        <p>{settings.backgroundMode === 'edge' ? '从画面上沿与两侧识别背景；同色的内部区域也会一起清理。' : '保留照片中的全部颜色。'}</p>
+      </div>
     </div>
   )
 }
