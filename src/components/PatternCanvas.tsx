@@ -25,7 +25,12 @@ export function PatternCanvas({ result, view, highlightIndex, className = '', la
       const context = canvas.getContext('2d')
       if (!context) return
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-      drawPattern(context, result, view, bounds.width, bounds.height, { highlightIndex })
+      // Screen previews prioritize fast interaction. Material codes are drawn
+      // only by the high-resolution PNG/PDF export paths.
+      drawPattern(context, result, view, bounds.width, bounds.height, {
+        highlightIndex,
+        cellLabels: false,
+      })
     }
     render()
     const observer = new ResizeObserver(render)

@@ -14,6 +14,9 @@ const initialSettings: PatternSettings = {
   rows: 74,
   paletteId: 'mard-221',
   imageFit: 'cover',
+  cropX: 0.5,
+  cropY: 0.5,
+  cropZoom: 1,
   maxColors: 24,
   dither: 0.2,
   removeWhite: false,
@@ -30,6 +33,7 @@ export default function App() {
 
   const handleFile = useCallback((file: File) => {
     setHighlightIndex(null)
+    setSettings((current) => ({ ...current, cropX: 0.5, cropY: 0.5, cropZoom: 1 }))
     void loadFile(file).catch(() => undefined)
   }, [loadFile])
 
@@ -96,7 +100,7 @@ export default function App() {
         </div>
 
         <div className="editor-column">
-          <EditorControls settings={settings} onChange={setSettings} />
+          <EditorControls source={source} settings={settings} onChange={setSettings} />
           <div className="stats" aria-live="polite">
             <div><strong>{totalLabel}</strong><span>颗</span></div>
             <div><strong>{colorLabel}</strong><span>色</span></div>
@@ -125,7 +129,7 @@ export default function App() {
             </div>
           </div>
           <div className="pattern-sheet pattern-sheet--main">
-            <PatternCanvas result={result} view={view} highlightIndex={highlightIndex} label={view === 'beads' ? '拼豆效果预览' : '带符号和辅助线的拼豆图纸'} />
+            <PatternCanvas result={result} view={view} highlightIndex={highlightIndex} label={view === 'beads' ? '拼豆效果预览' : '带色块和辅助线的拼豆图纸预览'} />
           </div>
           <div className="pattern-sheet pattern-sheet--peek" aria-hidden="true">
             <div className="peek-meta"><span>{result ? `${result.columns} × ${result.rows}` : '—'}</span><span>{totalLabel} 颗</span></div>

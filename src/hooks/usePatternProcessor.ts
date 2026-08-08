@@ -121,7 +121,11 @@ export function usePatternProcessor(settings: PatternSettings) {
       if (!context) return
       context.imageSmoothingEnabled = true
       context.imageSmoothingQuality = 'high'
-      const drawRect = getImageDrawRect(source.width, source.height, columns, rows, settings.imageFit)
+      const drawRect = getImageDrawRect(source.width, source.height, columns, rows, settings.imageFit, {
+        x: settings.cropX,
+        y: settings.cropY,
+        zoom: settings.cropZoom,
+      })
       context.drawImage(source.bitmap, drawRect.x, drawRect.y, drawRect.width, drawRect.height)
       const imageData = context.getImageData(0, 0, columns, rows)
       const id = requestRef.current + 1

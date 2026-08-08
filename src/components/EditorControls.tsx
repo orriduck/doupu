@@ -1,14 +1,16 @@
 import { CaretDown } from '@phosphor-icons/react'
+import { CropEditor } from './CropEditor'
 import { BOARD_PRESETS } from '../data/boards'
 import { PALETTE_OPTIONS } from '../data/palettes'
-import type { PatternSettings } from '../types'
+import type { PatternSettings, SourceImage } from '../types'
 
 interface EditorControlsProps {
+  source: SourceImage | null
   settings: PatternSettings
   onChange: (settings: PatternSettings) => void
 }
 
-export function EditorControls({ settings, onChange }: EditorControlsProps) {
+export function EditorControls({ source, settings, onChange }: EditorControlsProps) {
   const update = <Key extends keyof PatternSettings>(key: Key, value: PatternSettings[Key]) => {
     onChange({ ...settings, [key]: value })
   }
@@ -49,11 +51,12 @@ export function EditorControls({ settings, onChange }: EditorControlsProps) {
       <div className="fit-control">
         <div className="fit-heading"><span>图片适配</span><span>{settings.columns} × {settings.rows}</span></div>
         <div className="fit-options" role="group" aria-label="图片适配方式">
-          <button type="button" className={settings.imageFit === 'cover' ? 'is-active' : ''} aria-pressed={settings.imageFit === 'cover'} onClick={() => update('imageFit', 'cover')}>裁切铺满</button>
-          <button type="button" className={settings.imageFit === 'contain' ? 'is-active' : ''} aria-pressed={settings.imageFit === 'contain'} onClick={() => update('imageFit', 'contain')}>完整缩放</button>
+          <button type="button" className={settings.imageFit === 'cover' ? 'is-active' : ''} aria-pressed={settings.imageFit === 'cover'} onClick={() => onChange({ ...settings, imageFit: 'cover', cropX: 0.5, cropY: 0.5, cropZoom: 1 })}>裁切铺满</button>
+          <button type="button" className={settings.imageFit === 'contain' ? 'is-active' : ''} aria-pressed={settings.imageFit === 'contain'} onClick={() => onChange({ ...settings, imageFit: 'contain', cropX: 0.5, cropY: 0.5, cropZoom: 1 })}>完整缩放</button>
         </div>
         <p>{settings.imageFit === 'cover' ? '保持比例，裁掉超出板型的部分。' : '保留整张图片，空白格不计入豆数。'}</p>
       </div>
+      {source && <CropEditor source={source} settings={settings} onChange={onChange} />}
       <label className="control-row">
         <span>颜色</span>
         <input

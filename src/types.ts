@@ -14,6 +14,9 @@ export interface PatternSettings {
   rows: number
   paletteId: PaletteId
   imageFit: ImageFit
+  cropX: number
+  cropY: number
+  cropZoom: number
   maxColors: number
   dither: number
   removeWhite: boolean
