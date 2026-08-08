@@ -1,0 +1,171 @@
+import { ArrowRight, GithubLogo, List, X } from '@phosphor-icons/react'
+import { useCallback, useEffect, useState } from 'react'
+import { EditorControls } from './components/EditorControls'
+import { Logo } from './components/Logo'
+import { MaterialsLedger } from './components/MaterialsLedger'
+import { MethodSection } from './components/MethodSection'
+import { PatternCanvas } from './components/PatternCanvas'
+import { UploadAction } from './components/UploadAction'
+import { downloadPatternPng } from './lib/drawPattern'
+import { usePatternProcessor } from './hooks/usePatternProcessor'
+import type { PatternSettings, PatternView } from './types'
+
+const initialSettings: PatternSettings = {
+  columns: 64,
+  maxColors: 24,
+  dither: 0.2,
+  removeWhite: false,
+}
+
+export default function App() {
+  const [settings, setSettings] = useState(initialSettings)
+  const [view, setView] = useState<PatternView>('beads')
+  const [highlightIndex, setHighlightIndex] = useState<number | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [exportStatus, setExportStatus] = useState<'idle' | 'pdf' | 'png' | 'done'>('idle')
+  const { source, result, isProcessing, error, loadFile } = usePatternProcessor(settings)
+
+  const handleFile = useCallback((file: File) => {
+    setHighlightIndex(null)
+    void loadFile(file).catch(() => undefined)
+  }, [loadFile])
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      const image = Array.from(event.clipboardData?.files ?? []).find((file) => file.type.startsWith('image/'))
+      if (image) handleFile(image)
+    }
+    window.addEventListener('paste', handlePaste)
+    return () => window.removeEventListener('paste', handlePaste)
+  }, [handleFile])
+
+  const runExport = async (kind: 'pdf' | 'png') => {
+    if (!result || exportStatus !== 'idle') return
+    setExportStatus(kind)
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 40))
+    try {
+      if (kind === 'pdf') {
+        const { exportPatternPdf } = await import('./lib/exportPdf')
+        await exportPatternPdf(result, source?.name ?? 'doupu-pattern')
+      } else {
+        await downloadPatternPng(result, source?.name ?? 'doupu-pattern')
+      }
+      setExportStatus('done')
+      window.setTimeout(() => setExportStatus('idle'), 2200)
+    } catch {
+      setExportStatus('idle')
+    }
+  }
+
+  const totalLabel = result?.totalBeads.toLocaleString() ?? '—'
+  const colorLabel = result?.palette.length ?? '—'
+
+  return (
+    <main className="site-shell" id="top">
+      <header className="site-header">
+        <Logo />
+        <nav className="desktop-nav" aria-label="主要导航">
+          <a className="is-active" href="#maker">制作</a>
+          <a href="#method">方法</a>
+          <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">GitHub</a>
+        </nav>
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen((value) => !value)}
+        >
+          <span>菜单</span>
+          {isMenuOpen ? <X size={20} weight="thin" /> : <List size={20} weight="thin" />}
+        </button>
+        {isMenuOpen && (
+          <nav className="mobile-nav" aria-label="移动导航">
+            <a href="#maker" onClick={() => setIsMenuOpen(false)}>制作</a>
+            <a href="#method" onClick={() => setIsMenuOpen(false)}>方法</a>
+            <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">GitHub</a>
+          </nav>
+        )}
+      </header>
+
+      <section className="maker" id="maker">
+        <div className="maker-intro">
+          <h1><span>把喜欢的画面，</span><br /><span>做成一颗颗豆。</span></h1>
+          <p>上传照片，调整尺寸与颜色，生成可以真正照着拼的图纸。</p>
+          <UploadAction onFile={handleFile} />
+        </div>
+
+        <div className="editor-column">
+          <EditorControls settings={settings} onChange={setSettings} />
+          <div className="view-tabs" role="tablist" aria-label="预览模式">
+            <button role="tab" aria-selected={view === 'beads'} className={view === 'beads' ? 'is-active' : ''} onClick={() => setView('beads')}>效果</button>
+            <button role="tab" aria-selected={view === 'chart'} className={view === 'chart' ? 'is-active' : ''} onClick={() => setView('chart')}>图纸</button>
+          </div>
+          <div className="stats" aria-live="polite">
+            <div><strong>{totalLabel}</strong><span>颗</span></div>
+            <div><strong>{colorLabel}</strong><span>色</span></div>
+          </div>
+        </div>
+
+        <div
+          className={`media-stage ${isDragging ? 'is-dragging' : ''}`}
+          onDragEnter={(event) => { event.preventDefault(); setIsDragging(true) }}
+          onDragOver={(event) => event.preventDefault()}
+          onDragLeave={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsDragging(false)
+          }}
+          onDrop={(event) => {
+            event.preventDefault()
+            setIsDragging(false)
+            const file = Array.from(event.dataTransfer.files).find((item) => item.type.startsWith('image/'))
+            if (file) handleFile(file)
+          }}
+        >
+          <div className="pattern-sheet pattern-sheet--main">
+            <PatternCanvas result={result} view={view} highlightIndex={highlightIndex} label={view === 'beads' ? '拼豆效果预览' : '带符号和辅助线的拼豆图纸'} />
+          </div>
+          <div className="pattern-sheet pattern-sheet--peek" aria-hidden="true">
+            <div className="peek-meta"><span>{result ? `${result.columns} × ${result.rows}` : '—'}</span><span>{totalLabel} 颗</span></div>
+            <PatternCanvas result={result} view={view === 'beads' ? 'chart' : 'beads'} label="另一种预览" />
+          </div>
+          {isProcessing && <div className="processing"><span />正在重新配色</div>}
+          {isDragging && <div className="drop-message">松开即可换图</div>}
+        </div>
+
+        <div className="maker-ledger">
+          <MaterialsLedger result={result} highlightIndex={highlightIndex} onHighlight={setHighlightIndex} />
+          <div className="export-actions">
+            <button type="button" onClick={() => void runExport('pdf')} disabled={!result || exportStatus !== 'idle'}>
+              <span>{exportStatus === 'pdf' ? '正在排版…' : exportStatus === 'done' ? '已下载' : '导出 PDF'}</span>
+              <ArrowRight size={28} weight="thin" aria-hidden="true" />
+            </button>
+            <button type="button" onClick={() => void runExport('png')} disabled={!result || exportStatus !== 'idle'}>
+              <span>{exportStatus === 'png' ? '正在生成…' : '图纸 PNG'}</span>
+              <ArrowRight size={22} weight="thin" aria-hidden="true" />
+            </button>
+          </div>
+          <UploadAction onFile={handleFile} compact />
+        </div>
+      </section>
+
+      {error && <div className="error-note" role="alert">{error}</div>}
+
+      <div className="color-index" aria-hidden="true">
+        <span>白</span><span>蓝</span><span>浅蓝</span><span>黄</span><span>红</span><span>绿</span><span>棕</span><span>深灰</span>
+      </div>
+
+      <MethodSection />
+
+      <footer className="site-footer">
+        <div>
+          <Logo />
+          <p>免费、开源，图片不离开你的设备。</p>
+        </div>
+        <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">
+          <GithubLogo size={19} weight="light" aria-hidden="true" />查看源码
+        </a>
+        <p className="palette-disclaimer">Hama 色号来自官方色卡；屏幕颜色为近似参考，实物可能因批次与光线不同。</p>
+      </footer>
+    </main>
+  )
+}
