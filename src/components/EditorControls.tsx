@@ -14,7 +14,7 @@ export function EditorControls({ settings, onChange }: EditorControlsProps) {
     <div className="editor-controls" aria-label="图案设置">
       <div className="control-row control-row--static">
         <span>色盘</span>
-        <span className="control-value">Hama Midi</span>
+        <span className="control-value">MARD 221</span>
       </div>
       <label className="control-row">
         <span>尺寸</span>

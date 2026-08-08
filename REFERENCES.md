@@ -2,9 +2,11 @@
 
 ## 拼豆与图纸规则
 
+- [MARD 221 在线色卡](https://www.pindou.online/colors) — 豆谱默认 A–H/M 材料色号与屏幕 HEX 的数据来源；H2 为白色、H7 为黑色。
+- [MARD 色号交叉参考](https://www.pixel-beads.com/zh/mard-bead-color-chart) — 用于核对 221 色体系、扩展系列与 H 系列编号。两者均为社区维护资料，实物仍应以用户持有的色卡为准。
 - [Hama Instructions](https://hama.dk/en/pages/instructions-1) — 拼放、熨烫纸与熨烫流程。
 - [Hama Colour Chart](https://hama.dk/en/pages/colour-chart) — 品牌色号与可用尺寸。
-- [Hama 2026 Colour Card PDF](https://cdn.shopify.com/s/files/1/0726/3771/0492/files/colour-chart-number.pdf?v=1777215620) — 豆谱默认材料编号的直接依据。
+- [Hama 2026 Colour Card PDF](https://cdn.shopify.com/s/files/1/0726/3771/0492/files/colour-chart-number.pdf?v=1777215620) — 不同品牌编号体系的对照参考，不再作为豆谱默认色盘。
 - [Perler Standard Fusing Method](https://perler.com/blogs/projects/standard-fusing-method) — 熨烫纸、均匀圆周移动与翻面的工艺参考。
 - [CIE 200:2011 / CIEDE2000](https://www.cie.co.at/publications/colorimetry-part-6-ciede2000-colour-difference-formula-1) — 感知色差匹配方法。
 - [Pixel-Beads](https://www.pixel-beads.net/) — 浏览器本地处理与可打印图纸的同类产品参考。

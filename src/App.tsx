@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { EditorControls } from './components/EditorControls'
 import { Logo } from './components/Logo'
 import { MaterialsLedger } from './components/MaterialsLedger'
-import { MethodSection } from './components/MethodSection'
 import { PatternCanvas } from './components/PatternCanvas'
 import { UploadAction } from './components/UploadAction'
 import { downloadPatternPng } from './lib/drawPattern'
@@ -67,7 +66,6 @@ export default function App() {
         <Logo />
         <nav className="desktop-nav" aria-label="主要导航">
           <a className="is-active" href="#maker">制作</a>
-          <a href="#method">方法</a>
           <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
         <button
@@ -82,7 +80,6 @@ export default function App() {
         {isMenuOpen && (
           <nav className="mobile-nav" aria-label="移动导航">
             <a href="#maker" onClick={() => setIsMenuOpen(false)}>制作</a>
-            <a href="#method" onClick={() => setIsMenuOpen(false)}>方法</a>
             <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">GitHub</a>
           </nav>
         )}
@@ -150,12 +147,6 @@ export default function App() {
 
       {error && <div className="error-note" role="alert">{error}</div>}
 
-      <div className="color-index" aria-hidden="true">
-        <span>白</span><span>蓝</span><span>浅蓝</span><span>黄</span><span>红</span><span>绿</span><span>棕</span><span>深灰</span>
-      </div>
-
-      <MethodSection />
-
       <footer className="site-footer">
         <div>
           <Logo />
@@ -164,7 +155,7 @@ export default function App() {
         <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">
           <GithubLogo size={19} weight="light" aria-hidden="true" />查看源码
         </a>
-        <p className="palette-disclaimer">Hama 色号来自官方色卡；屏幕颜色为近似参考，实物可能因批次与光线不同。</p>
+        <p className="palette-disclaimer">默认采用 MARD 221 常用色号：H2 为白色，H7 为黑色。屏幕颜色仅作近似参考。</p>
       </footer>
     </main>
   )

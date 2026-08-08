@@ -78,7 +78,6 @@ function drawCover(result: PatternResult, name: string) {
     const x = listX + column * columnWidth
     context.fillText('BRAND', x, listTop + 44)
     context.fillText('CODE', x + 84, listTop + 44)
-    context.fillText('COLOR', x + 140, listTop + 44)
     context.textAlign = 'right'
     context.fillText('COUNT', x + columnWidth - 18, listTop + 44)
     context.textAlign = 'left'
@@ -97,7 +96,6 @@ function drawCover(result: PatternResult, name: string) {
     context.font = '14px "Geist", sans-serif'
     context.fillText(color.brand, x + 22, y)
     context.fillText(color.code, x + 84, y)
-    context.fillText(color.name, x + 140, y)
     context.textAlign = 'right'
     context.fillText(result.counts[index].toLocaleString(), x + columnWidth - 18, y)
     context.textAlign = 'left'

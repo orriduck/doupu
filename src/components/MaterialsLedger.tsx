@@ -22,7 +22,6 @@ export function MaterialsLedger({ result, highlightIndex, onHighlight }: Materia
       <div className="material-grid material-grid--head" aria-hidden="true">
         <span>品牌</span>
         <span>色号</span>
-        <span>名称</span>
         <span>数量</span>
       </div>
       <div className="material-rows">
@@ -39,7 +38,6 @@ export function MaterialsLedger({ result, highlightIndex, onHighlight }: Materia
               <i style={{ backgroundColor: color.hex }} aria-hidden="true" />
               {color.code}
             </span>
-            <span>{color.name}</span>
             <span className="material-count">{count.toLocaleString()}</span>
           </button>
         ))}
