@@ -180,7 +180,7 @@ input:focus-visible {
   min-width: 0;
   grid-column: 5 / span 8;
   grid-row: 1 / span 2;
-  margin-top: 38px;
+  margin-top: 0;
 }
 
 .maker-intro {
@@ -260,6 +260,16 @@ input:focus-visible {
 
 .editor-controls {
   width: 100%;
+}
+
+.control-section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.control-section--color {
+  border-top: 0.5px solid var(--rule);
 }
 
 .control-row {
@@ -791,14 +801,36 @@ input:focus-visible {
 
 .stats {
   width: 100%;
-  min-height: 66px;
-  margin: 0 0 12px;
+  min-height: 0;
+  margin: 0;
+}
+
+.stats-heading {
+  min-height: 28px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.stats-heading h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 520;
+}
+
+.stats-heading > span {
+  color: #8a8a84;
+  font-size: 11px;
+}
+
+.stats-values {
+  min-height: 52px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 12px;
 }
 
-.stats > div {
+.stats-values > div {
   padding: 0 0 6px;
   display: grid;
   grid-auto-flow: column;
@@ -809,7 +841,7 @@ input:focus-visible {
   gap: 6px;
 }
 
-.stats > div + div {
+.stats-values > div + div {
   padding-left: 0;
 }
 
@@ -1177,7 +1209,7 @@ input:focus-visible {
 
 @media (min-width: 1101px) {
   .maker-ledger {
-    margin-top: 18px;
+    margin-top: 83px;
     padding-top: 12px;
   }
 
@@ -1190,12 +1222,16 @@ input:focus-visible {
   }
 
   .maker-ledger .material-row {
-    min-height: 22px;
+    min-height: 18px;
   }
 
   .maker-ledger .materials-more {
-    min-height: 24px;
+    min-height: 22px;
     margin-top: 0;
+  }
+
+  .maker-ledger .export-heading {
+    min-height: 28px;
   }
 }
 
@@ -1465,7 +1501,7 @@ input:focus-visible {
     min-height: 118px;
   }
 
-  .stats > div + div {
+  .stats-values > div + div {
     padding-left: 0;
   }
 

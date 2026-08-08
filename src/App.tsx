@@ -140,10 +140,16 @@ export default function App() {
           </div>
 
           <div className="maker-ledger">
-            <div className="stats" aria-live="polite">
-              <div><strong>{totalLabel}</strong><span>颗</span></div>
-              <div><strong>{colorLabel}</strong><span>色</span></div>
-            </div>
+            <section className="stats" aria-labelledby="usage-title" aria-live="polite">
+              <div className="stats-heading">
+                <h2 id="usage-title">用量</h2>
+                <span>当前图案</span>
+              </div>
+              <div className="stats-values">
+                <div><strong>{totalLabel}</strong><span>颗</span></div>
+                <div><strong>{colorLabel}</strong><span>色</span></div>
+              </div>
+            </section>
             <MaterialsLedger result={result} highlightIndex={highlightIndex} onHighlight={setHighlightIndex} />
             <section className="export-panel" aria-labelledby="export-title">
               <div className="export-heading">
