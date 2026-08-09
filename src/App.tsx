@@ -167,53 +167,61 @@ export default function App() {
       </header>
 
       <section className="maker maker--dual" id="maker">
-        <div className="maker-intro">
-          <h1><span>从照片开始，</span><br /><span>也可以一颗颗画。</span></h1>
-          <p>两种制作方式，共用同一套实体豆色、图纸与项目文件。</p>
-          <div className="workflow-switch" role="tablist" aria-label="制作方式">
-            <button type="button" role="tab" aria-selected={workflow === 'photo'} className={workflow === 'photo' ? 'is-active' : ''} onClick={() => changeWorkflow('photo')}>
-              <span>照片转图</span><small>裁切、配色</small>
-            </button>
-            <button type="button" role="tab" aria-selected={workflow === 'board'} className={workflow === 'board' ? 'is-active' : ''} onClick={() => changeWorkflow('board')}>
-              <span>自由画板</span><small>自己选色绘制</small>
-            </button>
+        <div className="maker-primary">
+          <div className="maker-intro">
+            <h1><span>从照片开始，</span><br /><span>也可以一颗颗画。</span></h1>
+            <p>两种制作方式，共用同一套实体豆色、图纸与项目文件。</p>
+            <div className="workflow-switch" role="tablist" aria-label="制作方式">
+              <button type="button" role="tab" aria-selected={workflow === 'photo'} className={workflow === 'photo' ? 'is-active' : ''} onClick={() => changeWorkflow('photo')}>
+                <span>照片转图</span><small>裁切、配色</small>
+              </button>
+              <button type="button" role="tab" aria-selected={workflow === 'board'} className={workflow === 'board' ? 'is-active' : ''} onClick={() => changeWorkflow('board')}>
+                <span>自由画板</span><small>自己选色绘制</small>
+              </button>
+            </div>
+          </div>
+
+          <div className="editor-column">
+            {workflow === 'photo' ? (
+              <>
+                <UploadAction onFile={handleFile} />
+                <EditorControls section="setup" source={source} settings={settings} onChange={setSettings} />
+              </>
+            ) : (
+              <>
+                {photoResult && boardInitialized && (
+                  <button type="button" className="transfer-action" onClick={copyPhotoToBoard}>
+                    <span>将照片效果放入画板</span><small>覆盖当前画板后继续手工修改</small>
+                  </button>
+                )}
+                {photoResult && !boardInitialized && (
+                  <button type="button" className="transfer-action" onClick={copyPhotoToBoard}>
+                    <span>载入当前照片效果</span><small>不需要的话，直接在空白画板上绘制</small>
+                  </button>
+                )}
+                <ManualControls
+                  artwork={artwork}
+                  selectedColor={selectedColor}
+                  tool={tool}
+                  brushSize={brushSize}
+                  onBoardChange={(columns, rows) => { setArtwork((current) => resizeArtwork(current, columns, rows)); setBoardInitialized(true); setBoardRevision((value) => value + 1) }}
+                  onPaletteChange={(paletteId) => { setArtwork((current) => remapArtworkPalette(current, paletteId)); setSelectedColor(0); setBoardInitialized(true); setBoardRevision((value) => value + 1) }}
+                  onColorChange={setSelectedColor}
+                  onToolChange={setTool}
+                  onBrushSizeChange={setBrushSize}
+                />
+              </>
+            )}
           </div>
         </div>
 
-        <div className="editor-column">
-          {workflow === 'photo' ? (
-            <>
-              <UploadAction onFile={handleFile} />
-              <EditorControls source={source} settings={settings} onChange={setSettings} />
-            </>
-          ) : (
-            <>
-              {photoResult && boardInitialized && (
-                <button type="button" className="transfer-action" onClick={copyPhotoToBoard}>
-                  <span>将照片效果放入画板</span><small>覆盖当前画板后继续手工修改</small>
-                </button>
-              )}
-              {photoResult && !boardInitialized && (
-                <button type="button" className="transfer-action" onClick={copyPhotoToBoard}>
-                  <span>载入当前照片效果</span><small>不需要的话，直接在空白画板上绘制</small>
-                </button>
-              )}
-              <ManualControls
-                artwork={artwork}
-                selectedColor={selectedColor}
-                tool={tool}
-                brushSize={brushSize}
-                onBoardChange={(columns, rows) => { setArtwork((current) => resizeArtwork(current, columns, rows)); setBoardInitialized(true); setBoardRevision((value) => value + 1) }}
-                onPaletteChange={(paletteId) => { setArtwork((current) => remapArtworkPalette(current, paletteId)); setSelectedColor(0); setBoardInitialized(true); setBoardRevision((value) => value + 1) }}
-                onColorChange={setSelectedColor}
-                onToolChange={setTool}
-                onBrushSizeChange={setBrushSize}
-              />
-            </>
-          )}
-        </div>
+        {workflow === 'photo' && (
+          <div className="completion-controls">
+            <EditorControls section="color" source={source} settings={settings} onChange={setSettings} />
+          </div>
+        )}
 
-        <div className="workbench-column">
+        <div className="workbench-column workbench-primary">
           <div className="workbench-toolbar">
             <div className="view-tabs" role="tablist" aria-label="工作区视图">
               {viewTabs.map((tab) => (
@@ -225,6 +233,7 @@ export default function App() {
                 ref={projectInputRef}
                 className="visually-hidden"
                 type="file"
+                aria-label="打开豆谱项目文件"
                 accept=".doupu,application/json,application/vnd.doupu.project+json"
                 onChange={(event) => {
                   const file = event.currentTarget.files?.[0]
@@ -268,24 +277,25 @@ export default function App() {
             )}
           </div>
 
-          <div className="export-dock">
-            <div className="export-summary">
-              <strong>完成后导出</strong>
-              <span>{occupiedBounds ? `${occupiedBounds.columns} × ${occupiedBounds.rows} 有效图案` : 'PDF、PNG 与可继续编辑的项目文件'}</span>
-            </div>
-            <button type="button" onClick={() => void runExport('pdf')} disabled={!activeResult || activeResult.totalBeads === 0 || exportStatus !== 'idle'}>
-              <span><strong>{exportStatus === 'pdf' ? '正在排版' : exportStatus === 'pdf-done' ? 'PDF 已下载' : '打印图纸'}</strong><small>横向 PDF，分页含 2 格重叠</small></span>
-              <DownloadSimple size={22} weight="light" />
-            </button>
-            <button type="button" onClick={() => void runExport('png')} disabled={!activeResult || activeResult.totalBeads === 0 || exportStatus !== 'idle'}>
-              <span><strong>{exportStatus === 'png' ? '正在生成' : exportStatus === 'png-done' ? 'PNG 已下载' : '保存图纸'}</strong><small>带行列号、色号与辅助线</small></span>
-              <DownloadSimple size={22} weight="light" />
-            </button>
-            <button type="button" onClick={() => void saveProject()} disabled={exportStatus !== 'idle'}>
-              <span><strong>{exportStatus === 'project' ? '正在保存' : exportStatus === 'project-done' ? '项目已下载' : '保存项目'}</strong><small>.doupu，可再次打开继续制作</small></span>
-              <FileArrowDown size={22} weight="light" />
-            </button>
+        </div>
+
+        <div className="export-dock">
+          <div className="export-summary">
+            <strong>完成后导出</strong>
+            <span>{occupiedBounds ? `${occupiedBounds.columns} × ${occupiedBounds.rows} 有效图案` : 'PDF、PNG 与可继续编辑的项目文件'}</span>
           </div>
+          <button type="button" onClick={() => void runExport('pdf')} disabled={!activeResult || activeResult.totalBeads === 0 || exportStatus !== 'idle'}>
+            <span><strong>{exportStatus === 'pdf' ? '正在排版' : exportStatus === 'pdf-done' ? 'PDF 已下载' : '打印图纸'}</strong><small>横向 PDF，分页含 2 格重叠</small></span>
+            <DownloadSimple size={22} weight="light" />
+          </button>
+          <button type="button" onClick={() => void runExport('png')} disabled={!activeResult || activeResult.totalBeads === 0 || exportStatus !== 'idle'}>
+            <span><strong>{exportStatus === 'png' ? '正在生成' : exportStatus === 'png-done' ? 'PNG 已下载' : '保存图纸'}</strong><small>带行列号、色号与辅助线</small></span>
+            <DownloadSimple size={22} weight="light" />
+          </button>
+          <button type="button" onClick={() => void saveProject()} disabled={exportStatus !== 'idle'}>
+            <span><strong>{exportStatus === 'project' ? '正在保存' : exportStatus === 'project-done' ? '项目已下载' : '保存项目'}</strong><small>.doupu，可再次打开继续制作</small></span>
+            <FileArrowDown size={22} weight="light" />
+          </button>
         </div>
       </section>
 

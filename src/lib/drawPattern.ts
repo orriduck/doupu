@@ -4,6 +4,7 @@ import { getOccupiedBounds } from './patternBounds'
 interface DrawOptions {
   highlightIndex?: number | null
   cellLabels?: boolean
+  fastPreview?: boolean
   startColumn?: number
   startRow?: number
   endColumn?: number
@@ -54,6 +55,20 @@ export function drawPattern(
         const radius = minCell * 0.44
         const cx = x + cellWidth / 2
         const cy = y + cellHeight / 2
+        if (options.fastPreview) {
+          context.beginPath()
+          context.arc(cx, cy, radius, 0, Math.PI * 2)
+          context.fillStyle = color.hex
+          context.fill()
+          context.beginPath()
+          context.arc(cx, cy, radius * 0.25, 0, Math.PI * 2)
+          context.fillStyle = '#f5f1e8'
+          context.fill()
+          context.strokeStyle = 'rgba(17,17,15,0.16)'
+          context.lineWidth = Math.max(0.4, minCell * 0.04)
+          context.stroke()
+          continue
+        }
         context.save()
         context.shadowColor = 'rgba(17, 17, 15, 0.16)'
         context.shadowBlur = Math.max(0.5, minCell * 0.12)

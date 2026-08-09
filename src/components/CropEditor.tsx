@@ -122,6 +122,7 @@ export function CropEditor({ source, settings, onChange }: CropEditorProps) {
           src={source.previewUrl}
           alt=""
           draggable={false}
+          fetchPriority="high"
           style={{
             left: `${drawRect.x / settings.columns * 100}%`,
             top: `${drawRect.y / settings.rows * 100}%`,

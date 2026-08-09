@@ -12,6 +12,10 @@
   --red: #b8352a;
   --page: min(100% - 64px, 1500px);
   --editor-width: 100%;
+  --page-gutter: 24px;
+  --control-label: 88px;
+  --control-value: 104px;
+  --control-gap: 12px;
   --ease-heavy: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -91,7 +95,7 @@ input:focus-visible {
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 24px;
+  gap: var(--page-gutter);
   align-items: center;
   position: relative;
   z-index: 3;
@@ -99,7 +103,7 @@ input:focus-visible {
 }
 
 .logo {
-  grid-column: 1 / span 1;
+  grid-column: 1 / span 2;
   width: max-content;
   display: inline-flex;
   align-items: center;
@@ -142,7 +146,7 @@ input:focus-visible {
 }
 
 .desktop-nav {
-  grid-column: 2 / span 4;
+  grid-column: 3 / span 4;
   display: flex;
   align-items: center;
   gap: clamp(34px, 4vw, 72px);
@@ -185,7 +189,7 @@ input:focus-visible {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: auto 1fr;
-  column-gap: 24px;
+  column-gap: var(--page-gutter);
   align-items: start;
 }
 
@@ -290,19 +294,9 @@ input:focus-visible {
 }
 
 .control-section--color {
-  margin-top: 7px;
-  padding-top: 11px;
-  position: relative;
-}
-
-.control-section--color::before {
-  width: 30px;
-  height: 1px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: '';
-  background: var(--ink);
+  margin: 0;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--rule);
 }
 
 .control-row {
@@ -312,19 +306,23 @@ input:focus-visible {
   border: 0;
   background: transparent;
   display: grid;
-  grid-template-columns: 88px minmax(72px, 1fr) 104px;
+  grid-template-columns: var(--control-label) minmax(72px, 1fr) var(--control-value);
   align-items: center;
-  column-gap: 12px;
+  column-gap: var(--control-gap);
   font-size: 13px;
   text-align: left;
 }
 
 .control-row--static {
-  grid-template-columns: 88px 1fr;
+  grid-template-columns: var(--control-label) minmax(0, 1fr);
 }
 
 .control-row--select {
-  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-columns: var(--control-label) minmax(0, 1fr) var(--control-value);
+}
+
+.control-row--select > .editorial-select {
+  grid-column: 2 / -1;
 }
 
 .editorial-select {
@@ -341,15 +339,15 @@ input:focus-visible {
 .editorial-select__trigger {
   width: 100%;
   min-height: 31px;
-  padding: 0 24px 0 0;
+  padding: 0;
   border: 0;
   background: transparent;
   color: var(--ink);
   cursor: pointer;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16px;
   align-items: center;
-  justify-content: flex-end;
-  gap: 9px;
+  column-gap: 10px;
   font: inherit;
   text-align: right;
   transition: color 250ms var(--ease-heavy);
@@ -446,7 +444,7 @@ input:focus-visible {
 }
 
 .control-row--button {
-  grid-template-columns: 88px 1fr;
+  grid-template-columns: var(--control-label) minmax(0, 1fr);
   cursor: pointer;
 }
 
@@ -467,8 +465,8 @@ input:focus-visible {
 
 .control-row:has(input[type='range'])::after {
   position: absolute;
-  left: 100px;
-  right: 116px;
+  left: calc(var(--control-label) + var(--control-gap));
+  right: calc(var(--control-value) + var(--control-gap));
   bottom: -0.5px;
   height: 1.5px;
   content: '';
@@ -494,10 +492,16 @@ input:focus-visible {
 
 .fit-heading {
   margin-bottom: 8px;
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--control-label) minmax(0, 1fr) var(--control-value);
+  column-gap: var(--control-gap);
   align-items: baseline;
-  justify-content: space-between;
   font-size: 12px;
+}
+
+.fit-heading span:last-child {
+  grid-column: 3;
+  justify-self: end;
 }
 
 .fit-heading span:last-child {
@@ -550,10 +554,16 @@ input:focus-visible {
 
 .background-heading {
   margin-bottom: 8px;
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--control-label) minmax(0, 1fr) var(--control-value);
+  column-gap: var(--control-gap);
   align-items: baseline;
-  justify-content: space-between;
   font-size: 12px;
+}
+
+.background-heading span:last-child {
+  grid-column: 3;
+  justify-self: end;
 }
 
 .background-heading span:last-child {
@@ -602,9 +612,9 @@ input:focus-visible {
   min-height: 40px;
   margin-top: 8px;
   display: grid;
-  grid-template-columns: 76px 1fr 28px;
+  grid-template-columns: var(--control-label) minmax(0, 1fr) var(--control-value);
   align-items: center;
-  gap: 12px;
+  gap: var(--control-gap);
   color: #6f6f69;
   font-size: 11px;
 }
@@ -730,12 +740,12 @@ input:focus-visible {
 }
 
 .crop-zoom {
-  width: min(100%, var(--crop-size));
+  width: 100%;
   min-height: 34px;
   display: grid;
-  grid-template-columns: 44px 28px minmax(72px, 1fr) 28px 50px;
+  grid-template-columns: var(--control-label) 28px minmax(72px, 1fr) 28px var(--control-value);
   align-items: center;
-  gap: 9px;
+  gap: var(--control-gap);
   font-size: 12px;
 }
 
@@ -2027,9 +2037,9 @@ input:focus-visible {
   min-height: 32px;
   margin-top: 7px;
   display: grid;
-  grid-template-columns: 68px minmax(72px, 1fr) 36px;
+  grid-template-columns: var(--control-label) minmax(72px, 1fr) var(--control-value);
   align-items: center;
-  gap: 10px;
+  gap: var(--control-gap);
   color: #6f6f69;
   font-size: 10px;
   animation: brush-size-enter 280ms var(--ease-heavy) both;
@@ -2234,41 +2244,43 @@ input:focus-visible {
 }
 
 .export-dock {
-  min-height: 92px;
+  min-height: 112px;
   border-top: 0.5px solid var(--rule);
   display: grid;
-  grid-template-columns: minmax(150px, 1.2fr) repeat(3, minmax(150px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: stretch;
 }
 
 .export-summary {
-  padding: 13px 16px 10px 0;
+  padding: 17px 20px 14px 0;
   display: grid;
-  align-content: center;
-  gap: 5px;
+  align-content: start;
+  gap: 7px;
 }
 
 .export-summary strong {
-  font-family: 'Noto Serif SC Variable', 'Songti SC', serif;
-  font-size: 18px;
-  font-weight: 430;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .export-summary span {
   color: #777771;
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
 }
 
 .export-dock > button {
   min-width: 0;
-  padding: 10px 12px;
+  padding: 17px 16px 14px;
   border: 0;
+  border-left: 0.5px solid var(--faint);
   background: transparent;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22px;
+  align-items: start;
+  column-gap: 16px;
   text-align: left;
   transition: color 240ms ease, background-color 240ms ease;
 }
@@ -2281,24 +2293,71 @@ input:focus-visible {
 .export-dock > button > span {
   min-width: 0;
   display: grid;
-  gap: 4px;
+  gap: 7px;
 }
 
 .export-dock > button strong {
-  font-size: 12px;
-  font-weight: 560;
+  font-size: 14px;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .export-dock > button small {
   color: #777771;
-  font-size: 9px;
+  font-size: 10px;
   line-height: 1.45;
+}
+
+.export-dock > button svg {
+  margin-top: -2px;
+  justify-self: end;
 }
 
 .export-dock > button:disabled {
   cursor: wait;
   opacity: 0.32;
+}
+
+.completion-controls .background-control {
+  padding: 0;
+  display: grid;
+  grid-template-columns: var(--control-label) minmax(0, 1fr);
+  column-gap: var(--control-gap);
+  align-items: start;
+}
+
+.completion-controls .background-heading {
+  min-height: 32px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.completion-controls .background-heading span:last-child {
+  display: none;
+}
+
+.completion-controls .background-options {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.completion-controls .background-range,
+.completion-controls .background-control p {
+  grid-column: 1 / -1;
+}
+
+.completion-controls .background-range {
+  grid-row: 2;
+}
+
+.completion-controls .background-control p {
+  grid-row: 2;
+  margin-top: 6px;
+}
+
+.completion-controls .background-range + p {
+  grid-row: 3;
 }
 
 @media (max-width: 1100px) and (min-width: 768px) {
@@ -2516,4 +2575,142 @@ input:focus-visible {
   .export-dock > button small {
     font-size: 11px;
   }
+}
+
+/* Shared typographic grid: upper work area and lower completion band */
+@media (min-width: 768px) {
+  .maker--dual {
+    grid-template-rows: auto auto;
+    align-items: stretch;
+    align-content: start;
+  }
+
+  .maker-primary {
+    min-width: 0;
+    grid-column: 1 / span 4;
+    grid-row: 1;
+  }
+
+  .maker-primary .maker-intro,
+  .maker-primary .editor-column {
+    width: 100%;
+    max-width: none;
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .completion-controls {
+    min-width: 0;
+    grid-column: 1 / span 4;
+    grid-row: 2;
+    align-self: start;
+  }
+
+  .maker--dual .workbench-primary {
+    min-width: 0;
+    height: 100%;
+    grid-column: 5 / span 8;
+    grid-row: 1;
+    margin-top: 0;
+  }
+
+  .workbench-primary .media-stage--workbench {
+    height: auto;
+    min-height: 490px;
+    flex: 1 1 auto;
+  }
+
+  .maker--dual > .export-dock {
+    min-width: 0;
+    grid-column: 5 / span 8;
+    grid-row: 2;
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  :root {
+    --control-label: 60px;
+    --control-value: 55px;
+    --control-gap: 5px;
+  }
+
+  .crop-zoom {
+    grid-template-columns: var(--control-label) 28px minmax(20px, 1fr) 28px var(--control-value);
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --control-label: 72px;
+    --control-value: 76px;
+    --control-gap: 8px;
+  }
+
+  .maker-primary,
+  .completion-controls,
+  .workbench-primary,
+  .maker--dual > .export-dock {
+    width: 100%;
+    max-width: none;
+  }
+
+  .maker-primary { order: 1; }
+  .completion-controls { order: 2; }
+  .workbench-primary { order: 3; }
+  .maker--dual > .export-dock { order: 4; }
+
+  .maker-primary .editor-column {
+    margin-top: 18px;
+  }
+
+  .control-row {
+    grid-template-columns: var(--control-label) minmax(72px, 1fr) var(--control-value);
+    column-gap: var(--control-gap);
+  }
+
+  .control-row--static,
+  .control-row--button {
+    grid-template-columns: var(--control-label) minmax(0, 1fr);
+  }
+
+  .control-row--select {
+    grid-template-columns: var(--control-label) minmax(0, 1fr) var(--control-value);
+  }
+
+  .background-range,
+  .brush-size-control {
+    grid-template-columns: var(--control-label) minmax(72px, 1fr) var(--control-value);
+    gap: var(--control-gap);
+  }
+
+  .crop-zoom {
+    grid-template-columns: var(--control-label) 28px minmax(64px, 1fr) 28px var(--control-value);
+    gap: var(--control-gap);
+  }
+
+  .completion-controls .control-section--color {
+    margin-top: 0;
+  }
+
+  .maker--dual > .export-dock {
+    margin-top: 0;
+  }
+}
+
+/* Secondary copy keeps the quiet hierarchy while meeting AA contrast. */
+.workflow-switch button,
+.fit-heading span:last-child,
+.fit-options button,
+.fit-control p,
+.background-heading span:last-child,
+.background-options button,
+.background-control p,
+.crop-heading span,
+.view-tabs button,
+.export-summary span,
+.export-dock > button small,
+.site-footer > div p,
+.palette-disclaimer {
+  color: #65655f;
 }

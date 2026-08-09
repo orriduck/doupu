@@ -40,7 +40,7 @@ export function EditorialSelect<Value extends string>({ value, options, ariaLabe
       <button
         type="button"
         className="editorial-select__trigger"
-        aria-label={ariaLabel}
+        aria-label={`${ariaLabel}：${selected.label}`}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((current) => !current)}

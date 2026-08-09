@@ -32,6 +32,7 @@ export function PatternCanvas({ result, view, highlightIndex, className = '', la
       drawPattern(context, result, view, bounds.width, bounds.height, {
         highlightIndex,
         cellLabels: false,
+        fastPreview: true,
         startColumn: visibleBounds?.startColumn,
         startRow: visibleBounds?.startRow,
         endColumn: visibleBounds?.endColumn,

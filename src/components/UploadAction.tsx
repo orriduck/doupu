@@ -14,6 +14,7 @@ export function UploadAction({ onFile, compact = false }: UploadActionProps) {
         ref={inputRef}
         className="visually-hidden"
         type="file"
+        aria-label="选择图片文件"
         accept="image/jpeg,image/png,image/webp,image/avif,image/*"
         onChange={(event) => {
           const file = event.currentTarget.files?.[0]

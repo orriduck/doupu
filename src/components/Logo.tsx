@@ -1,6 +1,6 @@
 export function Logo() {
   return (
-    <a className="logo" href="#top" aria-label="豆谱首页">
+    <a className="logo" href="#top">
       <svg className="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
         <path className="logo-mark__tail" d="M33.7 31.2 43 39.8l-14.2-2.4Z" />
         <path className="logo-mark__body" d="M12.4 28.6c0-10 6.4-18.3 16.1-18.3 8.4 0 14 6.5 14 15.2 0 10.2-7.7 15.2-16.4 15.2-8.4 0-13.7-4.5-13.7-12.1Z" />

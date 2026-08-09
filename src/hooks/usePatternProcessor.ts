@@ -39,14 +39,14 @@ export function usePatternProcessor(settings: PatternSettings) {
   const requestRef = useRef(0)
   const sourceRef = useRef<SourceImage | null>(null)
 
-  const replaceSource = useCallback(async (blob: Blob, name: string) => {
+  const replaceSource = useCallback(async (blob: Blob, name: string, previewUrlOverride?: string) => {
     if (blob.size > MAX_FILE_SIZE) throw new Error('图片超过 40 MB，请先缩小后再试。')
     if (blob.type && !blob.type.startsWith('image/')) throw new Error('请选择浏览器支持的图片文件。')
     setError(null)
     setIsProcessing(true)
     try {
       const bitmap = await createSafeBitmap(blob)
-      const previewUrl = URL.createObjectURL(blob)
+      const previewUrl = previewUrlOverride ?? URL.createObjectURL(blob)
       const next: SourceImage = {
         bitmap,
         blob,
@@ -108,7 +108,7 @@ export function usePatternProcessor(settings: PatternSettings) {
         if (!response.ok) throw new Error('示例图加载失败')
         return response.blob()
       })
-      .then((blob) => replaceSource(blob, '蓝鸟与花'))
+      .then((blob) => replaceSource(blob, '蓝鸟与花', '/sample-bird.webp'))
       .catch(() => setError('示例图加载失败，你仍然可以选择自己的图片。'))
 
     return () => {
