@@ -102,8 +102,29 @@ input:focus-visible {
   grid-column: 1 / span 1;
   width: max-content;
   display: inline-flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 9px;
   line-height: 1;
+}
+
+.logo-mark {
+  width: 39px;
+  height: 39px;
+  overflow: visible;
+}
+
+.logo-mark__tail { fill: #123a5e; }
+.logo-mark__body { fill: #1762a1; }
+.logo-mark__breast { fill: #ef9b23; }
+.logo-mark__wing { fill: #123e69; }
+.logo-mark__cheek { fill: #fbfbf8; }
+.logo-mark__beak { fill: #17232d; }
+.logo-mark__eye { fill: #17232d; }
+.logo-mark__eye-glint { fill: #fbfbf8; }
+
+.logo-wordmark {
+  display: inline-flex;
+  flex-direction: column;
 }
 
 .logo-cn {
@@ -1316,6 +1337,11 @@ input:focus-visible {
 
   .logo-cn {
     font-size: 25px;
+  }
+
+  .logo-mark {
+    width: 37px;
+    height: 37px;
   }
 
   .desktop-nav {
