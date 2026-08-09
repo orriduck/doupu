@@ -145,42 +145,6 @@ input:focus-visible {
   letter-spacing: 0.19em;
 }
 
-.desktop-nav {
-  grid-column: 3 / span 4;
-  display: flex;
-  align-items: center;
-  gap: clamp(34px, 4vw, 72px);
-  font-size: 14px;
-}
-
-.desktop-nav a {
-  position: relative;
-  padding: 8px 0;
-}
-
-.desktop-nav a::after {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 1.5px;
-  content: '';
-  background: var(--red);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 500ms var(--ease-heavy);
-}
-
-.desktop-nav a:is(:hover, .is-active)::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
-.menu-toggle,
-.mobile-nav {
-  display: none;
-}
-
 .maker {
   width: var(--page);
   min-height: calc(100svh - 76px);
@@ -243,28 +207,48 @@ input:focus-visible {
   margin-top: 10px;
 }
 
-.upload-link {
-  min-height: 34px;
+.entry-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.upload-link,
+.project-entry-link {
+  min-height: 36px;
   padding: 0;
   border: 0;
   background: none;
   display: inline-flex;
   align-items: center;
-  gap: 26px;
+  gap: 8px;
   cursor: pointer;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 470;
+  white-space: nowrap;
 }
 
-.upload-link svg {
+.project-entry-link {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 430;
+}
+
+.upload-link svg:last-child,
+.project-entry-link svg {
   transition: transform 600ms var(--ease-heavy);
 }
 
-.upload-link:hover svg {
-  transform: translateX(9px);
+.upload-link:hover svg:last-child {
+  transform: translateX(4px);
 }
 
-.upload-link:active {
+.project-entry-link:hover svg {
+  transform: translateY(-2px);
+}
+
+.upload-link:active,
+.project-entry-link:active {
   transform: scale(0.985);
 }
 
@@ -1202,24 +1186,20 @@ input:focus-visible {
 }
 
 .site-footer {
-  width: var(--page);
-  margin: 0 auto;
-  padding: 60px 0 48px;
-  border-top: 0.5px solid var(--rule);
+  width: 100%;
+  margin: 72px 0 0;
+  padding: 44px max(32px, calc((100% - 1500px) / 2)) 42px;
+  border-top: 0;
+  background: var(--ink);
+  color: var(--paper);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 24px;
-  align-items: start;
+  gap: var(--page-gutter);
+  align-items: center;
 }
 
 .site-footer > div {
   grid-column: 1 / span 4;
-}
-
-.site-footer > div p {
-  margin: 22px 0 0;
-  color: #777771;
-  font-size: 12px;
 }
 
 .site-footer > a {
@@ -1227,13 +1207,14 @@ input:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 9px;
+  color: var(--paper);
   font-size: 13px;
 }
 
 .palette-disclaimer {
   grid-column: 9 / span 4;
   margin: 0;
-  color: #777771;
+  color: #bdbdb6;
   font-size: 11px;
   line-height: 1.7;
 }
@@ -1332,17 +1313,6 @@ input:focus-visible {
   }
 }
 
-@media (min-width: 768px) and (max-width: 1100px) {
-  .site-header .logo {
-    grid-column: 1 / span 2;
-  }
-
-  .site-header .desktop-nav {
-    grid-column: 3 / span 3;
-    gap: clamp(28px, 3.3vw, 40px);
-  }
-}
-
 @media (max-width: 767px) {
   :root {
     --page: calc(100% - 32px);
@@ -1352,7 +1322,7 @@ input:focus-visible {
   .site-header {
     min-height: 94px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 20px;
   }
 
@@ -1363,44 +1333,6 @@ input:focus-visible {
   .logo-mark {
     width: 37px;
     height: 37px;
-  }
-
-  .desktop-nav {
-    display: none;
-  }
-
-  .menu-toggle {
-    min-width: 64px;
-    min-height: 44px;
-    padding: 0;
-    border: 0;
-    background: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 9px;
-    cursor: pointer;
-    font-size: 15px;
-  }
-
-  .mobile-nav {
-    position: absolute;
-    z-index: 3;
-    top: 84px;
-    right: 0;
-    width: min(220px, 70vw);
-    padding: 18px 20px;
-    background: rgba(251, 251, 248, 0.94);
-    backdrop-filter: blur(18px);
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    box-shadow: 0 16px 42px rgba(17, 17, 15, 0.08);
-    animation: enter-page 500ms var(--ease-heavy) both;
-  }
-
-  .mobile-nav a {
-    min-height: 34px;
   }
 
   .maker {
@@ -1443,10 +1375,10 @@ input:focus-visible {
     margin-top: 34px;
   }
 
-  .upload-link {
+  .upload-link,
+  .project-entry-link {
     min-height: 52px;
-    gap: 30px;
-    font-size: 21px;
+    gap: 8px;
   }
 
   .editor-column {
@@ -1686,10 +1618,12 @@ input:focus-visible {
 
 
   .site-footer {
-    padding: 48px 0 38px;
+    margin-top: 56px;
+    padding: 40px 16px 36px;
     display: flex;
     flex-direction: column;
-    gap: 34px;
+    align-items: flex-start;
+    gap: 28px;
   }
 
   .site-footer > div,
@@ -1729,15 +1663,15 @@ input:focus-visible {
 
 .workflow-switch {
   width: 100%;
-  margin-top: 18px;
+  margin-top: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--ink);
+  border: 1px solid var(--ink);
 }
 
 .workflow-switch button {
-  min-height: 62px;
-  padding: 8px 10px 9px 0;
+  min-height: 66px;
+  padding: 10px 14px;
   border: 0;
   background: transparent;
   color: #777771;
@@ -1750,41 +1684,25 @@ input:focus-visible {
 }
 
 .workflow-switch button + button {
-  padding-left: 16px;
+  border-left: 1px solid var(--ink);
 }
 
 .workflow-switch button::after {
-  width: 30px;
-  height: 2px;
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  content: '';
-  background: var(--red);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 360ms var(--ease-heavy);
-}
-
-.workflow-switch button + button::after {
-  left: 16px;
+  display: none;
 }
 
 .workflow-switch button.is-active {
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.workflow-switch button:not(.is-active):hover {
+  background: rgba(17, 17, 15, 0.045);
 }
 
 .workflow-switch button:focus-visible {
-  outline: 0;
-  color: var(--red);
-}
-
-.workflow-switch button:focus-visible::after {
-  transform: scaleX(1);
-}
-
-.workflow-switch button.is-active::after {
-  transform: scaleX(1);
+  z-index: 1;
+  outline-offset: -3px;
 }
 
 .workflow-switch button:active,
@@ -1805,6 +1723,10 @@ input:focus-visible {
   font-weight: 400;
 }
 
+.workflow-switch button.is-active small {
+  color: #c9c9c2;
+}
+
 .maker--dual .editor-column {
   margin-top: 12px;
 }
@@ -1816,6 +1738,10 @@ input:focus-visible {
 .maker--dual .editor-column > .upload-action .upload-link {
   min-height: 36px;
   font-size: 15px;
+}
+
+.maker--dual .editor-column > .upload-action .project-entry-link {
+  min-height: 36px;
 }
 
 .maker--dual .editor-column > .upload-action .privacy-note {
@@ -2434,6 +2360,11 @@ input:focus-visible {
     margin-bottom: 8px;
   }
 
+  .maker--dual .editor-column > .upload-action .upload-link,
+  .maker--dual .editor-column > .upload-action .project-entry-link {
+    min-height: 44px;
+  }
+
   .workbench-column {
     margin-top: 34px;
   }
@@ -2710,7 +2641,10 @@ input:focus-visible {
 .view-tabs button,
 .export-summary span,
 .export-dock > button small,
-.site-footer > div p,
 .palette-disclaimer {
   color: #65655f;
+}
+
+.site-footer .palette-disclaimer {
+  color: #bdbdb6;
 }

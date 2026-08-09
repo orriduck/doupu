@@ -1,4 +1,4 @@
-import { DownloadSimple, FileArrowDown, FolderOpen, GithubLogo, List, X } from '@phosphor-icons/react'
+import { DownloadSimple, FileArrowDown, FolderOpen, GithubLogo } from '@phosphor-icons/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EditorControls } from './components/EditorControls'
 import { Logo } from './components/Logo'
@@ -41,7 +41,6 @@ export default function App() {
   const [tool, setTool] = useState<BoardTool>('pencil')
   const [brushSize, setBrushSize] = useState(1)
   const [isDragging, setIsDragging] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [exportStatus, setExportStatus] = useState<ExportStatus>('idle')
   const [projectError, setProjectError] = useState<string | null>(null)
   const projectInputRef = useRef<HTMLInputElement>(null)
@@ -151,26 +150,13 @@ export default function App() {
     <main className="site-shell" id="top">
       <header className="site-header">
         <Logo />
-        <nav className="desktop-nav" aria-label="主要导航">
-          <a className="is-active" href="#maker">制作</a>
-          <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">GitHub</a>
-        </nav>
-        <button className="menu-toggle" type="button" aria-expanded={isMenuOpen} onClick={() => setIsMenuOpen((value) => !value)}>
-          <span>菜单</span>{isMenuOpen ? <X size={20} weight="thin" /> : <List size={20} weight="thin" />}
-        </button>
-        {isMenuOpen && (
-          <nav className="mobile-nav" aria-label="移动导航">
-            <a href="#maker" onClick={() => setIsMenuOpen(false)}>制作</a>
-            <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer">GitHub</a>
-          </nav>
-        )}
       </header>
 
       <section className="maker maker--dual" id="maker">
         <div className="maker-primary">
           <div className="maker-intro">
-            <h1><span>从照片开始，</span><br /><span>也可以一颗颗画。</span></h1>
-            <p>两种制作方式，共用同一套实体豆色、图纸与项目文件。</p>
+            <h1><span>把喜欢的画面，</span><br /><span>拼成手里的作品。</span></h1>
+            <p>从照片、豆谱项目或空白豆板开始，完成配色、图纸与导出。</p>
             <div className="workflow-switch" role="tablist" aria-label="制作方式">
               <button type="button" role="tab" aria-selected={workflow === 'photo'} className={workflow === 'photo' ? 'is-active' : ''} onClick={() => changeWorkflow('photo')}>
                 <span>照片转图</span><small>裁切、配色</small>
@@ -184,7 +170,7 @@ export default function App() {
           <div className="editor-column">
             {workflow === 'photo' ? (
               <>
-                <UploadAction onFile={handleFile} />
+                <UploadAction onFile={handleFile} onOpenProject={() => projectInputRef.current?.click()} />
                 <EditorControls section="setup" source={source} settings={settings} onChange={setSettings} />
               </>
             ) : (
@@ -302,7 +288,7 @@ export default function App() {
       {(error || projectError) && <div className="error-note" role="alert">{projectError ?? error}</div>}
 
       <footer className="site-footer">
-        <div><Logo /><p>免费、开源，图片与项目都只在本机处理。</p></div>
+        <div><Logo /></div>
         <a href="https://github.com/orriduck/doupu" target="_blank" rel="noreferrer"><GithubLogo size={19} weight="light" aria-hidden="true" />查看源码</a>
         <p className="palette-disclaimer">支持 MARD 221 与 Hama Midi 色号；屏幕颜色仅作近似参考，购买前请核对实体色卡。</p>
       </footer>
